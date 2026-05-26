@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 def home(request):
     return render(request, 'library/index.html')
@@ -24,3 +24,7 @@ def login_view(request):
             })
 
     return render(request, 'library/login.html')
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')

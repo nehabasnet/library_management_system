@@ -1,11 +1,24 @@
 from django.db import models
 
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
 class Book(models.Model):
-    title    = models.CharField(max_length=200)
-    author   = models.CharField(max_length=200)
-    isbn     = models.CharField(max_length=13, unique=True)
-    category = models.CharField(max_length=100)
-    quantity = models.IntegerField(default=1)
+    category    = models.ForeignKey(Category, on_delete=models.CASCADE)
+    title       = models.CharField(max_length=200)
+    author      = models.CharField(max_length=200)
+    isbn        = models.CharField(max_length=13, unique=True)
+    description = models.TextField(blank=True, default='')
+    quantity    = models.IntegerField(default=1)
+
+    def available(self):
+        issued = IssueBook.objects.filter(book=self, return_date__isnull=True).count()
+        return self.quantity - issued
 
     def __str__(self):
         return f"{self.title} by {self.author}"

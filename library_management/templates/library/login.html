@@ -1,160 +1,261 @@
 {% load static %}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="{% static 'library/css/login.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'library/css/login.css' %}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
     <style>
       :root {
-    --primary: #8a5f41;
-    --primary-dark: #6b4732;
-    --accent: #b8845d;
-    --accent-dark: #9e6b48;
-    --bg: #f6f0eb;
-    --card: #ffffff;
-    --text: #2f241d;
-    --muted: #6b5b50;
-    --border: #d8c9bd;
-    --radius: 12px;
-}
+        --primary: #8a5f41;
+        --primary-dark: #6b4732;
+        --accent: #b8845d;
+        --accent-dark: #9e6b48;
+        --bg: #f6f0eb;
+        --card: #ffffff;
+        --text: #2f241d;
+        --muted: #6b5b50;
+        --border: #d8c9bd;
+        --radius: 12px;
+      }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
-    /* ── Auth screens ── */
-.auth-screen {
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-height:100vh;
-    padding:16px;
-    flex-direction:column;
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 14px;
+      }
+      /* ── Auth screens ── */
+      .auth-screen {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 16px;
+        flex-direction: column;
 
-    background: linear-gradient(
-        135deg,
-        #8a5f41 0%,
-        #6b4732 50%,
-        #4d3222 100%
-    );
-}
- 
-  
-  .auth-title { color: white; font-size: 22px; font-weight: 800; text-align: center; }
-  .auth-subtitle { color: rgba(255,255,255,.75); font-size: 13px; text-align: center; margin-top: 4px; }
-  .auth-card {
-    background: #fff; border-radius: 18px;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.25);
-    padding: 28px; width: 100%; max-width: 400px; margin-top: 28px;
-  }
-  
+        background: linear-gradient(
+          135deg,
+          #8a5f41 0%,
+          #6b4732 50%,
+          #4d3222 100%
+        );
+      }
 
-  /* ── Form elements ── */
-  .form-group { margin-bottom: 0; }
-  .form-label {
-    display: block; font-size: 11px; font-weight: 700;
-    color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px;
-  }
-  .form-input {
-    width: 100%; padding: 10px 12px; border-radius: 8px;
-    border: 1px solid var(--border); background: #F8FAFC;
-    font-size: 14px; color: var(--text); outline: none;
-    font-family: 'Inter', sans-serif;
-    transition: border-color 0.15s, box-shadow 0.15s;
-  }
-  .form-input:focus { border-color:#8a5f41; box-shadow: 0 0 0 3px rgba(138,95,65,0.15); background: white; }
-  .form-input-wrap { position: relative; }
-  .form-input-wrap .form-input { padding-right: 38px; }
-  .input-right-btn {
-    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-    background: none; border: none; cursor: pointer; color: var(--muted);
-    display: flex; align-items: center; padding: 0;
-  }
-  .input-right-btn:hover { color: var(--text); }
-  .space-y-4 > * + * {
-    margin-top:16px;
-  }
+      .auth-title {
+        color: white;
+        font-size: 22px;
+        font-weight: 800;
+        text-align: center;
+      }
+      .auth-subtitle {
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 13px;
+        text-align: center;
+        margin-top: 4px;
+      }
+      .auth-card {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        padding: 28px;
+        width: 100%;
+        max-width: 400px;
+        margin-top: 28px;
+      }
 
-  /* ── Buttons ── */
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600;
-    border: none; cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif;
-    white-space: nowrap;
-  }
-  .btn-primary { background:#8a5f41; color: white; }
-  .btn-primary:hover { background:#6b4732; box-shadow: 0 4px 12px rgba(107,71,50,0.4); }
-  .btn-full { width: 100%;margin-top: 12px; padding: 12px ; }
-  
-</style>
-</head>
-<body>
+      /* ── Form elements ── */
+      .form-group {
+        margin-bottom: 0;
+      }
+      .form-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 6px;
+      }
+      .form-input {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: #f8fafc;
+        font-size: 14px;
+        color: var(--text);
+        outline: none;
+        font-family: "Inter", sans-serif;
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
+      }
+      .form-input:focus {
+        border-color: #8a5f41;
+        box-shadow: 0 0 0 3px rgba(138, 95, 65, 0.15);
+        background: white;
+      }
+      .form-input-wrap {
+        position: relative;
+      }
+      .form-input-wrap .form-input {
+        padding-right: 38px;
+      }
+      .input-right-btn {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        padding: 0;
+      }
+      .input-right-btn:hover {
+        color: var(--text);
+      }
+      .space-y-4 > * + * {
+        margin-top: 16px;
+      }
+
+      /* ── Buttons ── */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.15s;
+        font-family: "Inter", sans-serif;
+        white-space: nowrap;
+      }
+      .btn-primary {
+        background: #8a5f41;
+        color: white;
+      }
+      .btn-primary:hover {
+        background: #6b4732;
+        box-shadow: 0 4px 12px rgba(107, 71, 50, 0.4);
+      }
+      .btn-full {
+        width: 100%;
+        margin-top: 12px;
+        padding: 12px;
+      }
+    </style>
+  </head>
+  <body>
     <div id="screen-admin-login" class="screen auth-screen">
-  <div style="text-align:center;margin-bottom:0;">
-    <div class="auth-title">Library Management System</div>
-    <div class="auth-subtitle">Login to your account</div>
-  </div>
-  <div class="auth-card">
-    <h2 style="font-size:17px;font-weight:800;color:var(--text);margin-bottom:20px;">Sign In</h2>
-    <form method="POST" class="space-y-4">
-
-    {% csrf_token %}
-
-    <div class="form-group">
-        <label class="form-label">Username</label>
-
-        <input
-            name="username"
-            class="form-input"
-            placeholder="Enter username"
-            type="text"
+      <div style="text-align: center; margin-bottom: 0">
+        <div class="auth-title">Library Management System</div>
+        <div class="auth-subtitle">Login to your account</div>
+      </div>
+      <div class="auth-card">
+        <h2
+          style="
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 20px;
+          "
         >
-    </div>
+          Sign In
+        </h2>
+        <form method="POST" class="space-y-4">
+          {% csrf_token %}
 
-    <div class="form-group">
-        <label class="form-label">Password</label>
-
-        <div class="form-input-wrap">
+          <div class="form-group">
+            <label class="form-label">Username</label>
 
             <input
+              name="username"
+              class="form-input"
+              placeholder="Enter username"
+              type="text"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password</label>
+
+            <div class="form-input-wrap">
+              <input
                 id="admin-password"
                 name="password"
                 class="form-input"
                 placeholder="Enter password"
                 type="password"
-            >
+              />
 
-            <button
+              <button
                 type="button"
                 class="input-right-btn"
-                onclick="togglePw('admin-password',this)"
-            >
+                onclick="togglePw('admin-password', this)"
+              >
                 <svg width="16" height="16" viewBox="0 0 24 24">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                    <circle cx="12" cy="12" r="3"/>
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
                 </svg>
-            </button>
+              </button>
+            </div>
+          </div>
 
+          <button type="submit" class="btn btn-primary btn-full">
+            Sign In
+          </button>
+        </form>
+
+        {% if error %}
+        <div class="alert alert-error" style="margin-top: 16px">
+          {{ error }}
         </div>
+        {% endif %}
+        <div
+          style="
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+          "
+        >
+          <p style="font-size: 12px; color: var(--muted)">
+            Student?
+            <button
+              style="
+                background: none;
+                border: none;
+                color: #8a5f41;
+                font-weight: 700;
+                cursor: pointer;
+                font-size: 12px;
+              "
+              onclick="showScreen('screen-student-login')"
+            >
+              Student Login
+            </button>
+          </p>
+          <p style="font-size: 10px; color: #cbd5e1; font-style: italic"></p>
+        </div>
+      </div>
     </div>
-
-    <button type="submit" class="btn btn-primary btn-full">
-        Sign In
-    </button>
-
-</form>
-
-{% if error %}
-<div class="alert alert-error" style="margin-top:16px;">
-    {{ error }}
-</div>
-{% endif %}
-    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);text-align:center;">
-      <p style="font-size:12px;color:var(--muted); ">Student? <button style="background:none;border:none;color: #8a5f41;font-weight:700;cursor:pointer;font-size:12px;">Student Login</button></p>
-      <p style="font-size:10px;color:#CBD5E1;font-style:italic;"></p>
-    </div>
-  </div>
-</div>
-</body>
+  </body>
 </html>

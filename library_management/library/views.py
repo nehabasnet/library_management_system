@@ -24,3 +24,13 @@ def login_view(request):
             })
 
     return render(request, 'library/login.html')
+from .models import Book
+
+
+def books(request):
+
+    books = Book.objects.all().order_by('category__name')
+
+    return render(request, 'library/books.html', {
+        'books': books
+    })

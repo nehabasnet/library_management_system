@@ -1,25 +1,26 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.db.models import Q
-from .models import Book
-
+from .models import Book, Category
 
 def home(request):
     return render(request, 'library/index.html')
 
-
+# User Authentication Views
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
 
     if request.method == 'POST':
-
         username = request.POST.get('username')
         password = request.POST.get('password')
-
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
             login(request, user)
-            return redirect('home')
+            return redirect('dashboard')
 
         else:
             return render(request, 'library/login.html', {
@@ -31,9 +32,9 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+from .models import Book
 
-
-
+# Book Views
 def books(request):
 
     query = request.GET.get('q')
@@ -50,3 +51,8 @@ def books(request):
     return render(request, 'library/books.html', {
         'books': books
     })
+
+# admin dashboard
+@login_required
+def dashboard(request):
+    return render(request, 'library/dashboard.html')

@@ -20,8 +20,10 @@ from library import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('library.urls')),
     path('', views.home, name='home'),
     path('login/', views.login_view, name='login'),
     path('books/', views.books, name='books'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('logout/', views.logout_view, name='logout'),
+    path('', include('library.urls')),
 ]

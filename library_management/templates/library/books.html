@@ -88,6 +88,41 @@
         color: #555;
         font-size: 18px;
       }
+      /* SEARCH BAR */
+
+      .search-box {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .search-box form {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .search-box input {
+        width: 300px;
+        padding: 12px;
+        border: 2px solid #8a5f41;
+        border-radius: 8px;
+        font-size: 16px;
+      }
+
+      .search-box button {
+        padding: 12px 20px;
+        border: none;
+        background-color: #8a5f41;
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s;
+      }
+
+      .search-box button:hover {
+        background-color: black;
+      }
 
       /* CATEGORY SECTION */
       .category-section {
@@ -170,6 +205,18 @@
       <h1>Library Collection</h1>
       <p>Browse books category-wise in our library.</p>
     </section>
+    <div class="search-box">
+      <form method="GET">
+        <input
+          type="text"
+          name="q"
+          placeholder="Search books..."
+          value="{{ request.GET.q }}"
+        />
+
+        <button type="submit">Search</button>
+      </form>
+    </div>
 
     <!-- BOOKS BY CATEGORY -->
 

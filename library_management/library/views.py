@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.db.models import Q
+from .models import Book
 
 def home(request):
     return render(request, 'library/index.html')
@@ -29,7 +31,16 @@ from .models import Book
 
 def books(request):
 
+    query = request.GET.get('q')
+
     books = Book.objects.all().order_by('category__name')
+
+    if query:
+        books = books.filter(
+            Q(title__icontains=query) |
+            Q(author__icontains=query) |
+            Q(category__name__icontains=query)
+        )
 
     return render(request, 'library/books.html', {
         'books': books

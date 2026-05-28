@@ -92,13 +92,14 @@
       font-weight: 700;
       color: #3d1f0f;
       letter-spacing: 3px;
+      padding: 30px;
     }
 
     /* ── Card Grid ── */
     .card-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
+      gap: 20px;
       padding: 8px 28px 40px;
       max-width: 860px;
       margin: 0 auto;
@@ -106,20 +107,20 @@
 
     .dash-card {
       border-radius: 14px;
-      padding: 32px 16px 24px;
+      padding: 32px 16px 20px;
       text-align: center;
       text-decoration: none;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       transition: transform 0.15s, opacity 0.15s;
       cursor: pointer;
     }
     .dash-card:hover {
       transform: translateY(-4px);
       opacity: 0.92;
-    }
+      }
     .dash-card i {
       font-size: 2.8rem;
       opacity: 0.35;
@@ -129,17 +130,17 @@
       font-size: 0.95rem;
       font-weight: 600;
     }
+    .dash-card small {
+      color: rgba(255,255,255,0.55);
+      font-size: 0.75rem;
+    }
 
-    /* Card colours — warm brown theme matching topbar */
-    .card-b1  { background: #8b5e3c; }
-    .card-b2  { background: #6b4226; }
-    .card-b3  { background: #a0714f; }
-    .card-b4  { background: #c49a6c; }
-    .card-b5  { background: #7a4f35; }
-    .card-b6  { background: #9e7c5a; }
-    .card-b7  { background: #4a2e1a; }
-    .card-b8  { background: #b8864e; }
-    .card-b9  { background: #3d1f0f; }
+    .card-1 { background: #8b5e3c; }
+    .card-2 { background: #6b4226; }
+    .card-3 { background: #a0714f; }
+    .card-4 { background: #7a4f35; }
+    .card-5 { background: #b8864e; }
+    .card-6 { background: #3d1f0f; }
 
     /* ── Responsive ── */
     @media (max-width: 600px) {
@@ -175,50 +176,41 @@
 <!-- Card Grid -->
 <div class="card-grid">
 
-  <a href="#" class="dash-card card-b1">
-    <i class="bi bi-person-plus-fill"></i>
-    <span>Add Members</span>
-  </a>
-
-  <a href="#" class="dash-card card-b2">
-    <i class="bi bi-people-fill"></i>
-    <span>View Members</span>
-  </a>
-
-  <a href="#" class="dash-card card-b3">
-    <i class="bi bi-journal-plus"></i>
-    <span>Add Books</span>
-  </a>
-
-  <a href="#" class="dash-card card-b4">
+  <a href="#" class="dash-card card-1">
     <i class="bi bi-journals"></i>
-    <span>View Books</span>
+    <span>Books</span>
+    <small>Add · View · Edit · Delete</small>
   </a>
 
-  <a href="#" class="dash-card card-b5">
+  <a href="#" class="dash-card card-2">
+    <i class="bi bi-people-fill"></i>
+    <span>Members</span>
+    <small>Add · View · Edit · Delete</small>
+  </a>
+
+  <a href="#" class="dash-card card-3">
     <i class="bi bi-arrow-up-right-circle-fill"></i>
-    <span>Issued Books</span>
+    <span>Issue Book</span>
+    <small>Issue to student</small>
   </a>
 
-  <a href="#" class="dash-card card-b6">
+  <a href="#" class="dash-card card-4">
     <i class="bi bi-arrow-counterclockwise"></i>
-    <span>Returned Books</span>
+    <span>Return Book</span>
+    <small>Return · Fine calculation</small>
   </a>
 
-  <a href="#" class="dash-card card-b7">
-    <i class="bi bi-clock-history"></i>
-    <span>Book History</span>
-  </a>
-
-  <a href="#" class="dash-card card-b8">
+  <a href="#" class="dash-card card-5">
     <i class="bi bi-cash-coin"></i>
-    <span>Fine Management</span>
+    <span>Fines</span>
+    <small>View · Overdue fines</small>
   </a>
 
-  <a href="{% url 'logout' %}" class="dash-card card-b9"
+  <a href="{% url 'logout' %}" class="dash-card card-6"
      onclick="return confirm('Are you sure you want to sign out?')">
     <i class="bi bi-box-arrow-right"></i>
     <span>Sign Out</span>
+    <small>Logout safely</small>
   </a>
 
 </div>

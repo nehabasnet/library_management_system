@@ -88,6 +88,50 @@
         color: #555;
         font-size: 18px;
       }
+      .page-layout {
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        gap: 35px;
+        width: 90%;
+        margin: 30px auto;
+        align-items: start;
+      }
+
+      .sidebar {
+        width: 100%;
+        background: #f5ede6;
+        padding: 20px;
+        border-radius: 12px;
+        height: fit-content;
+      }
+
+      .sidebar h3 {
+        color: #6f4e37;
+        margin-bottom: 15px;
+      }
+
+      .sidebar ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .sidebar li {
+        margin-bottom: 12px;
+      }
+
+      .sidebar a {
+        text-decoration: none;
+        color: #5a3e2b;
+        font-weight: 500;
+      }
+
+      .sidebar a:hover {
+        color: #a77f60;
+      }
+
+      .books-section {
+        width: 100%;
+      }
       /* SEARCH BAR */
 
       .search-box {
@@ -144,6 +188,11 @@
         grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
         gap: 25px;
       }
+      .books-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 24px;
+      }
       .book-card {
         background-color: white;
         padding: 20px;
@@ -185,70 +234,89 @@
     </style>
   </head>
   <body>
-    <!-- NAVBAR -->
-    <nav>
-      <div class="nav-left">
-        <h1>LibraryMS</h1>
+    <body>
+      <!-- NAVBAR -->
+      <nav>
+        <div class="nav-left">
+          <h1>LibraryMS</h1>
 
-        <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/books/">Books</a></li>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Contact</a></li>
-        </ul>
-      </div>
-
-      <a href="{% url 'login' %}" class="login-btn">Login</a>
-    </nav>
-    <!-- PAGE HEADER -->
-    <section class="page-header">
-      <h1>Library Collection</h1>
-      <p>Browse books category-wise in our library.</p>
-    </section>
-    <div class="search-box">
-      <form method="GET">
-        <input
-          type="text"
-          name="q"
-          placeholder="Search books..."
-          value="{{ request.GET.q }}"
-        />
-
-        <button type="submit">Search</button>
-      </form>
-    </div>
-
-    <!-- BOOKS BY CATEGORY -->
-
-    <!-- BOOKS SECTION -->
-
-    <section class="category-section">
-      <h2 class="category-title">All Books</h2>
-
-      <div class="books-container">
-        {% for book in books %}
-
-        <div class="book-card">
-          <h2>{{ book.title }}</h2>
-
-          <p><strong>Author:</strong> {{ book.author }}</p>
-
-          <p><strong>Category:</strong> {{ book.category }}</p>
-
-          <p><strong>Quantity:</strong> {{ book.quantity }}</p>
-
-          {% if book.available %}
-          <p class="available">Available</p>
-          {% else %}
-          <p class="not-available">Not Available</p>
-          {% endif %}
+          <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'books' %}">Books</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+          </ul>
         </div>
 
-        {% endfor %}
+        <a href="{% url 'login' %}" class="login-btn">Login</a>
+      </nav>
+
+      <!-- HEADER -->
+      <section class="page-header">
+        <h1>Library Collection</h1>
+        <p>Browse books category-wise in our library.</p>
+      </section>
+
+      <!-- SEARCH BAR -->
+      <div class="search-box">
+        <form method="GET">
+          <input
+            type="text"
+            name="q"
+            placeholder="Search books..."
+            value="{{ request.GET.q }}"
+          />
+          <button type="submit">Search</button>
+        </form>
       </div>
-    </section>
-    <footer>
-      <p>© 2026 Library Management System | Django Project</p>
-    </footer>
+
+      <!-- SIDEBAR + BOOKS -->
+      <div class="page-layout">
+        <!-- LEFT SIDEBAR -->
+        <aside class="sidebar">
+          <h3>Categories</h3>
+
+          <ul>
+            <li>
+              <a href="{% url 'books' %}">All Books</a>
+            </li>
+
+            {% for category in categories %}
+            <li>
+              <a href="{% url 'books' %}?category={{ category.id }}">
+                {{ category.name }}
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </aside>
+
+        <!-- RIGHT BOOK GRID -->
+        <section class="books-section">
+          <div class="books-grid">
+            {% for book in books %}
+            <div class="book-card">
+              <h3>{{ book.title }}</h3>
+              <p>Author: {{ book.author }}</p>
+              <p>Category: {{ book.category.name }}</p>
+
+              {% if book.available %}
+              <p class="available">Available</p>
+              {% else %}
+              <p class="not-available">Not Available</p>
+              {% endif %}
+            </div>
+            {% empty %}
+            <p>No books found.</p>
+            {% endfor %}
+          </div>
+        </section>
+      </div>
+
+      <!-- FOOTER -->
+      <footer>
+        <p>© 2026 Library Management System | Django Project</p>
+      </footer>
+    </body>
   </body>
 </html>

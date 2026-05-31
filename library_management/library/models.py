@@ -27,3 +27,12 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
+class ContactInfo(models.Model):
+    library_name = models.CharField(max_length=200)
+    address = models.TextField()
+    phone = models.CharField(max_length=30)
+    email = models.EmailField()
+    opening_hours = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.library_name

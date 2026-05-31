@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
-from .models import Book, Category
+from .models import Book, Category, ContactInfo
 
 def home(request):
     return render(request, 'library/index.html')
@@ -36,10 +36,14 @@ from .models import Book
 
 # Book Views
 def books(request):
-
     query = request.GET.get('q')
+    category_id = request.GET.get('category')
 
     books = Book.objects.all().order_by('category__name')
+    categories = Category.objects.all()
+
+    if category_id:
+        books = books.filter(category_id=category_id)
 
     if query:
         books = books.filter(
@@ -49,9 +53,16 @@ def books(request):
         )
 
     return render(request, 'library/books.html', {
-        'books': books
+        'books': books,
+        'categories': categories,
+        'selected_category': category_id,
     })
+def contact(request):
+    contact = ContactInfo.objects.first()
 
+    return render(request, 'library/contact.html', {
+        'contact': contact
+    })
 # admin dashboard
 @login_required
 def dashboard(request):

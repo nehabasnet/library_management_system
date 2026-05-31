@@ -63,6 +63,8 @@ def contact(request):
     return render(request, 'library/contact.html', {
         'contact': contact
     })
+def about(request):
+    return render(request, 'library/about.html')
 # admin dashboard
 @login_required
 def dashboard(request):

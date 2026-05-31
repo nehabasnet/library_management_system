@@ -26,4 +26,5 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('logout/', views.logout_view, name='logout'),
     path('', include('library.urls')),
+    path('about/', views.about, name='about'),
 ]

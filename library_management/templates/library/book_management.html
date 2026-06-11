@@ -191,7 +191,7 @@
   <!-- ── Add Book Form ── -->
   <div class="form-card">
     <h5><i class="bi bi-plus-circle-fill" style="color:#8b5e3c;"></i> Add New Book</h5>
-    <form method="POST" action="{% url 'book_add' %}">
+    <form method="POST" action="{% url 'book_add' %}" enctype="multipart/form-data">
       {% csrf_token %}
       <div class="form-row">
         <div class="form-group">
@@ -228,7 +228,25 @@
                  placeholder="1" min="1" value="1" required/>
         </div>
       </div>
-
+      <!-- Image Row -->
+      <div class="form-row-2" style="margin-top:16px;">
+        <div class="form-group">
+          <label class="form-label">Cover Image</label>
+          <input type="file" name="cover_image" class="form-input"
+                 accept="image/*" style="padding:6px 12px;"/>
+          <small style="color:#999;font-size:0.75rem;margin-top:4px;display:block;">
+            Upload from your computer (JPG, PNG)
+          </small>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Or Cover Image URL</label>
+          <input type="url" name="cover_url" class="form-input"
+                 placeholder="https://example.com/cover.jpg"/>
+          <small style="color:#999;font-size:0.75rem;margin-top:4px;display:block;">
+            Paste an image link from the internet
+          </small>
+        </div>
+      </div>  
       <div style="margin-top:16px;">
         <button type="submit" class="btn-add">
           <i class="bi bi-plus-circle-fill"></i> Add Book
@@ -262,6 +280,7 @@
       <table>
         <thead>
           <tr>
+            <th>Cover</th>
             <th>#</th>
             <th>Title</th>
             <th>Author</th>
@@ -273,6 +292,17 @@
           </tr>
         </thead>
         <tbody>
+          <td>
+  {% if book.get_cover %}
+    <img src="{{ book.get_cover }}" alt="{{ book.title }}"
+         style="width:40px;height:52px;object-fit:cover;border-radius:4px;border:1px solid #e0d5c8;"/>
+  {% else %}
+    <div style="width:40px;height:52px;background:#f0e8df;border-radius:4px;
+                display:flex;align-items:center;justify-content:center;">
+      <i class="bi bi-book" style="color:#c9b99a;font-size:1rem;"></i>
+    </div>
+  {% endif %}
+</td>
           {% for book in books %}
           <tr>
             <td style="color:#8b6f5a;">{{ forloop.counter }}</td>

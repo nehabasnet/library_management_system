@@ -89,13 +89,15 @@ def book_management(request):
 @login_required
 def book_add(request):
     if request.method == 'POST':
-        title    = request.POST.get('title', '').strip()
-        author   = request.POST.get('author', '').strip()
-        isbn     = request.POST.get('isbn', '').strip()
-        quantity = request.POST.get('quantity', 1)
-        desc     = request.POST.get('description', '').strip()
-        cat_id   = request.POST.get('category')
-        new_cat  = request.POST.get('new_category', '').strip()
+        title       = request.POST.get('title', '').strip()
+        author      = request.POST.get('author', '').strip()
+        isbn        = request.POST.get('isbn', '').strip()
+        quantity    = request.POST.get('quantity', 1)
+        desc        = request.POST.get('description', '').strip()
+        cover_url   = request.POST.get('cover_url', '').strip()
+        cat_id      = request.POST.get('category')
+        new_cat     = request.POST.get('new_category', '').strip()
+        cover_image = request.FILES.get('cover_image')   # ← file upload
 
         if new_cat:
             category, _ = Category.objects.get_or_create(name=new_cat)
@@ -112,7 +114,9 @@ def book_add(request):
         Book.objects.create(
             title=title, author=author, isbn=isbn,
             quantity=quantity, description=desc,
-            category=category, available=True
+            category=category, available=True,
+            cover_image=cover_image,             # ← new
+            cover_url=cover_url                  # ← new
         )
         messages.success(request, f'"{title}" added successfully!')
     return redirect('book_management')
@@ -128,9 +132,13 @@ def book_edit(request, pk):
         book.isbn        = request.POST.get('isbn', '').strip()
         book.quantity    = request.POST.get('quantity', 1)
         book.description = request.POST.get('description', '').strip()
+        book.cover_url   = request.POST.get('cover_url', '').strip()
         cat_id = request.POST.get('category')
         if cat_id:
             book.category = get_object_or_404(Category, id=cat_id)
+        # Only update image if a new one was uploaded
+        if request.FILES.get('cover_image'):
+            book.cover_image = request.FILES.get('cover_image')
         book.save()
         messages.success(request, f'"{book.title}" updated!')
         return redirect('book_management')

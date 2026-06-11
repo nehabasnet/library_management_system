@@ -10,21 +10,26 @@ class Category(models.Model):
         verbose_name_plural = 'Categories'
 
 class Book(models.Model):
-
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.CASCADE
-    )
-
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     author = models.CharField(max_length=200)
     isbn = models.CharField(max_length=13, unique=True, blank=True, default='')
     description = models.TextField(blank=True, default='')
     quantity = models.IntegerField(default=1)
     available = models.BooleanField(default=True)
+    cover_image = models.ImageField(upload_to='book_covers/', blank=True, null=True)  # ← file upload
+    cover_url   = models.URLField(blank=True, default='') 
 
     def __str__(self):
         return self.title
+    
+    def get_cover(self):
+        """Returns whichever cover is available — uploaded file takes priority."""
+        if self.cover_image:
+            return self.cover_image.url
+        if self.cover_url:
+            return self.cover_url
+        return None
 class ContactInfo(models.Model):
     library_name = models.CharField(max_length=200)
     address = models.TextField()

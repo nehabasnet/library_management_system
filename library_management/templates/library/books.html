@@ -11,6 +11,7 @@
       href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Petemoss&family=Shadows+Into+Light&display=swap"
       rel="stylesheet"
     />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
     <style>
       * {
         margin: 0;
@@ -293,8 +294,19 @@
         <section class="books-section">
           <div class="books-grid">
             {% for book in books %}
-            <div class="book-card">
-              <h3>{{ book.title }}</h3>
+<div class="book-card">
+
+  {% if book.get_cover %}
+    <img src="{{ book.get_cover }}" alt="{{ book.title }}"
+         style="width:100%;height:200px;object-fit:cover;border-radius:8px;margin-bottom:10px;"/>
+  {% else %}
+    <div style="width:100%;height:200px;background:#f0e8df;border-radius:8px;
+                display:flex;align-items:center;justify-content:center;margin-bottom:10px;">
+      <i class="bi bi-book" style="font-size:3rem;color:#c9b99a;"></i>
+    </div>
+  {% endif %}
+
+  <h3>{{ book.title }}</h3>
               <p>Author: {{ book.author }}</p>
               <p>Category: {{ book.category.name }}</p>
 

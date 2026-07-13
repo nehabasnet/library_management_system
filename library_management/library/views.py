@@ -155,3 +155,66 @@ def book_delete(request, pk):
         book.delete()
         messages.success(request, f'"{title}" deleted.')
     return redirect('book_management')
+
+#Member management
+
+@login_required
+def member_management(request):
+    query    = request.GET.get('q', '')
+    students = Student.objects.all()
+    if query:
+        students = students.filter(
+            Q(full_name__icontains=query) |
+            Q(student_id__icontains=query) |
+            Q(email__icontains=query)
+        )
+    return render(request, 'library/member_management.html', {
+        'students': students,
+        'query':    query,
+    })
+
+
+@login_required
+def member_add(request):
+    if request.method == 'POST':
+        full_name  = request.POST.get('full_name', '').strip()
+        student_id = request.POST.get('student_id', '').strip()
+        email      = request.POST.get('email', '').strip()
+        phone      = request.POST.get('phone', '').strip()
+
+        if Student.objects.filter(student_id=student_id).exists():
+            messages.error(request, f'Student ID "{student_id}" already exists.')
+            return redirect('member_management')
+
+        Student.objects.create(
+            full_name=full_name,
+            student_id=student_id,
+            email=email,
+            phone=phone
+        )
+        messages.success(request, f'"{full_name}" registered successfully!')
+    return redirect('member_management')
+
+
+@login_required
+def member_edit(request, pk):
+    student = get_object_or_404(Student, pk=pk)
+    if request.method == 'POST':
+        student.full_name  = request.POST.get('full_name', '').strip()
+        student.student_id = request.POST.get('student_id', '').strip()
+        student.email      = request.POST.get('email', '').strip()
+        student.phone      = request.POST.get('phone', '').strip()
+        student.save()
+        messages.success(request, f'"{student.full_name}" updated successfully!')
+        return redirect('member_management')
+    return render(request, 'library/member_edit.html', {'student': student})
+
+
+@login_required
+def member_delete(request, pk):
+    student = get_object_or_404(Student, pk=pk)
+    if request.method == 'POST':
+        name = student.full_name
+        student.delete()
+        messages.success(request, f'"{name}" removed.')
+    return redirect('member_management')

@@ -17,5 +17,7 @@ urlpatterns = [
     path('member-management/add/',               views.member_add,        name='member_add'),
     path('member-management/edit/<int:pk>/',     views.member_edit,       name='member_edit'),
     path('member-management/delete/<int:pk>/',   views.member_delete,     name='member_delete'),
+    path('issue-book/',  views.issue_book,   name='issue_book'),
+    path('issued-list/', views.issued_list,  name='issued_list'),
 ]
 

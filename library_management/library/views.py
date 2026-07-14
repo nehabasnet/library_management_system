@@ -218,3 +218,66 @@ def member_delete(request, pk):
         student.delete()
         messages.success(request, f'"{name}" removed.')
     return redirect('member_management')
+
+#Issue and Return Books
+
+from datetime import date, timedelta
+
+@login_required
+def issue_book(request):
+    students = Student.objects.all()
+    books    = Book.objects.filter(quantity__gt=0)
+
+    if request.method == 'POST':
+        student_id = request.POST.get('student')
+        book_id    = request.POST.get('book')
+        student    = get_object_or_404(Student, pk=student_id)
+        book       = get_object_or_404(Book, pk=book_id)
+
+        # Check stock
+        if book.quantity < 1:
+            messages.error(request, f'"{book.title}" is out of stock.')
+            return redirect('issue_book')
+
+        # Check if student already has this book
+        already = IssueBook.objects.filter(
+            student=student, book=book, return_date__isnull=True
+        ).exists()
+        if already:
+            messages.error(request, f'{student.full_name} already has "{book.title}" issued.')
+            return redirect('issue_book')
+
+        # Create issue record
+        due = date.today() + timedelta(days=14)
+        IssueBook.objects.create(
+            student=student,
+            book=book,
+            due_date=due
+        )
+
+        # Decrease stock
+        book.quantity -= 1
+        if book.quantity == 0:
+            book.available = False
+        book.save()
+
+        messages.success(request, f'"{book.title}" issued to {student.full_name}. Due: {due.strftime("%B %d, %Y")}')
+        return redirect('issue_book')
+
+    return render(request, 'library/issue_book.html', {
+        'students': students,
+        'books':    books,
+    })
+
+
+@login_required
+def issued_list(request):
+    today   = date.today()
+    records = IssueBook.objects.filter(
+        return_date__isnull=True
+    ).select_related('student', 'book').order_by('due_date')
+
+    return render(request, 'library/issued_list.html', {
+        'records': records,
+        'today':   today,
+    })

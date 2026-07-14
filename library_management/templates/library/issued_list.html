@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Issued Books — LMS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #e8ddd0; font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
+
+    .topbar {
+      background: #5c3d2e; padding: 12px 28px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 10px; }
+    .topbar-left .logo-icon {
+      width: 36px; height: 36px; background: #8b5e3c;
+      border-radius: 8px; display: flex; align-items: center;
+      justify-content: center; color: #fff; font-size: 1.1rem;
+    }
+    .topbar-left span { font-size: 0.95rem; font-weight: 600; color: #fff; }
+    .back-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: #8b5e3c; border: none; padding: 7px 14px;
+      border-radius: 8px; font-size: 0.82rem; color: #fff;
+      text-decoration: none; transition: background 0.15s;
+    }
+    .back-btn:hover { background: #a0714f; color: #fff; }
+
+    .page-body { max-width: 1100px; margin: 28px auto; padding: 0 20px; }
+    .page-heading { margin-bottom: 20px; }
+    .page-heading h2 { font-size: 1.4rem; font-weight: 700; color: #3d1f0f; margin-bottom: 4px; }
+    .page-heading p  { font-size: 0.85rem; color: #8b6f5a; }
+
+    .table-card {
+      background: #fff; border-radius: 16px;
+      overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .table-header {
+      padding: 16px 24px; border-bottom: 1px solid #f0e8df;
+    }
+    .table-header h5 { font-size: 1rem; font-weight: 700; color: #3d1f0f; margin: 0; }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      background: #faf3ec; font-size: 0.72rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.5px; color: #5c3d2e;
+      padding: 12px 16px; border-bottom: 1px solid #f0e8df; text-align: left;
+    }
+    tbody td {
+      padding: 12px 16px; font-size: 0.85rem;
+      color: #3d1f0f; border-bottom: 1px solid #faf3ec;
+      vertical-align: middle;
+    }
+    tbody tr:hover { background: #fdf8f3; }
+    tbody tr:last-child td { border-bottom: none; }
+    .badge-ontime  {
+      background: #f0fdf4; color: #166534;
+      font-size: 0.72rem; padding: 3px 10px;
+      border-radius: 20px; font-weight: 600;
+    }
+    .badge-overdue {
+      background: #fff1f2; color: #be123c;
+      font-size: 0.72rem; padding: 3px 10px;
+      border-radius: 20px; font-weight: 600;
+    }
+    .avatar {
+      width: 30px; height: 30px; background: #8b5e3c;
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; color: #fff;
+      font-size: 0.78rem; font-weight: 700;
+    }
+    .name-cell { display: flex; align-items: center; gap: 8px; }
+    .empty-state { text-align: center; padding: 48px 20px; color: #8b6f5a; }
+    .empty-state i { font-size: 2.5rem; opacity: 0.4; display: block; margin-bottom: 10px; }
+
+    .btn-return {
+      background: #7a4f35; color: #fff; border: none;
+      padding: 5px 14px; border-radius: 6px;
+      font-size: 0.78rem; font-weight: 600;
+      text-decoration: none; transition: background 0.15s;
+    }
+    .btn-return:hover { background: #5c3d2e; color: #fff; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo-icon"><i class="bi bi-book-half"></i></div>
+    <span>Library Management System</span>
+  </div>
+  <a href="{% url 'issue_book' %}" class="back-btn">
+    <i class="bi bi-arrow-left"></i> Back to Issue Book
+  </a>
+</div>
+
+<div class="page-body">
+  <div class="page-heading">
+    <h2><i class="bi bi-clock-history" style="color:#8b5e3c;margin-right:8px;"></i>All Issued Books</h2>
+    <p>All books currently issued and not yet returned.</p>
+  </div>
+
+  <div class="table-card">
+    <div class="table-header">
+      <h5>
+        Currently Issued
+        <span style="font-size:0.8rem;color:#8b6f5a;font-weight:400;margin-left:8px;">
+          ({{ records|length }} total)
+        </span>
+      </h5>
+    </div>
+
+    {% if records %}
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Student</th>
+            <th>Book</th>
+            <th>Issue Date</th>
+            <th>Due Date</th>
+            <th>Days Left</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in records %}
+          <tr>
+            <td style="color:#8b6f5a;">{{ forloop.counter }}</td>
+            <td>
+              <div class="name-cell">
+                <div class="avatar">{{ record.student.full_name|first|upper }}</div>
+                <div>
+                  <div style="font-weight:600;">{{ record.student.full_name }}</div>
+                  <div style="font-size:0.75rem;color:#8b6f5a;">{{ record.student.student_id }}</div>
+                </div>
+              </div>
+            </td>
+            <td><strong>{{ record.book.title }}</strong><br/>
+              <span style="font-size:0.75rem;color:#8b6f5a;">{{ record.book.author }}</span>
+            </td>
+            <td>{{ record.issue_date }}</td>
+            <td style ="{% if record.due_date < today %}color:#be123c;font-weight:600;{% endif %}">
+              {{ record.due_date }}
+            </td>
+            <td>
+              {% if record.due_date < today %}
+                <span style="color:#be123c;font-weight:600;font-size:0.82rem;">
+                  {{ today|timeuntil:record.due_date }} overdue
+                </span>
+              {% else %}
+                <span style="color:#166534;font-size:0.82rem;">
+                  {{ record.due_date|timeuntil }} left
+                </span>
+              {% endif %}
+            </td>
+            <td>
+              {% if record.due_date < today %}
+                <span class="badge-overdue"><i class="bi bi-exclamation-circle me-1"></i>Overdue</span>
+              {% else %}
+                <span class="badge-ontime"><i class="bi bi-check-circle me-1"></i>On Time</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="#" class="btn-return">
+                <i class="bi bi-arrow-counterclockwise me-1"></i>Return
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="empty-state">
+        <i class="bi bi-inbox"></i>
+        <p style="font-weight:600;margin-bottom:4px;">No books currently issued</p>
+        <p style="font-size:0.82rem;">All books are in the library.</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+</body>
+</html>

@@ -264,9 +264,16 @@ def issue_book(request):
         messages.success(request, f'"{book.title}" issued to {student.full_name}. Due: {due.strftime("%B %d, %Y")}')
         return redirect('issue_book')
 
+    today   = date.today()
+    records = IssueBook.objects.filter(
+        return_date__isnull=True
+    ).select_related('student', 'book').order_by('due_date')
+
     return render(request, 'library/issue_book.html', {
         'students': students,
         'books':    books,
+        'records':  records,
+        'today':    today,
     })
 
 
@@ -280,4 +287,45 @@ def issued_list(request):
     return render(request, 'library/issued_list.html', {
         'records': records,
         'today':   today,
+    })
+
+#Return Book
+
+@login_required
+def return_book(request, pk):
+    record = get_object_or_404(IssueBook, pk=pk)
+    today  = date.today()
+
+    # Calculate fine preview (NPR 5 per day)
+    overdue_days = max(0, (today - record.due_date).days)
+    fine_preview = overdue_days * 5
+
+    if request.method == 'POST':
+        record.return_date = today
+        record.fine        = fine_preview
+        record.save()
+
+        # Restore book stock
+        record.book.quantity += 1
+        record.book.available = True
+        record.book.save()
+
+        if fine_preview > 0:
+            messages.success(
+                request,
+                f'"{record.book.title}" returned by {record.student.full_name}. '
+                f'Fine: NPR {fine_preview} ({overdue_days} days overdue)'
+            )
+        else:
+            messages.success(
+                request,
+                f'"{record.book.title}" returned by {record.student.full_name}. No fine — returned on time!'
+            )
+        return redirect('issued_list')
+
+    return render(request, 'library/return_book.html', {
+        'record':       record,
+        'today':        today,
+        'overdue_days': overdue_days,
+        'fine_preview': fine_preview,
     })

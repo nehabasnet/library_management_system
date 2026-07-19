@@ -19,5 +19,6 @@ urlpatterns = [
     path('member-management/delete/<int:pk>/',   views.member_delete,     name='member_delete'),
     path('issue-book/',  views.issue_book,   name='issue_book'),
     path('issued-list/', views.issued_list,  name='issued_list'),
+    path('return-book/<int:pk>/', views.return_book, name='return_book'),
 ]
 

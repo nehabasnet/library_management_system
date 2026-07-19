@@ -253,7 +253,7 @@
       <h5><i class="bi bi-list-ul" style="color:#8b5e3c;margin-right:6px;"></i>
         All Books
         <span style="font-size:0.8rem;color:#8b6f5a;font-weight:400;margin-left:8px;">
-          ({{ books|length }} total)
+          ({{ books.paginator.count }} total)
         </span>
       </h5>
       <form method="GET">
@@ -333,6 +333,50 @@
   {% endfor %}
 </tbody>
       </table>
+     <!-- Pagination -->
+{% if books.has_other_pages %}
+<div style="display:flex;justify-content:center;align-items:center;
+            gap:6px;padding:16px 24px;border-top:1px solid #f0e8df;">
+
+  {% if books.has_previous %}
+    <a href="?{% if query %}q={{ query }}&{% endif %}page={{ books.previous_page_number }}"
+       style="padding:6px 14px;border-radius:8px;background:#faf8f5;
+              border:1px solid #e0d5c8;color:#5c3d2e;text-decoration:none;
+              font-size:0.82rem;font-weight:600;">
+      ← Prev
+    </a>
+  {% endif %}
+
+  {% for num in books.paginator.page_range %}
+    {% if books.number == num %}
+      <span style="padding:6px 14px;border-radius:8px;background:#8b5e3c;
+                   color:#fff;font-size:0.82rem;font-weight:600;">
+        {{ num }}
+      </span>
+    {% elif num > books.number|add:'-3' and num < books.number|add:'3' %}
+      <a href="?{% if query %}q={{ query }}&{% endif %}page={{ num }}"
+         style="padding:6px 14px;border-radius:8px;background:#faf8f5;
+                border:1px solid #e0d5c8;color:#5c3d2e;text-decoration:none;
+                font-size:0.82rem;">
+        {{ num }}
+      </a>
+    {% endif %}
+  {% endfor %}
+
+  {% if books.has_next %}
+    <a href="?{% if query %}q={{ query }}&{% endif %}page={{ books.next_page_number }}"
+       style="padding:6px 14px;border-radius:8px;background:#faf8f5;
+              border:1px solid #e0d5c8;color:#5c3d2e;text-decoration:none;
+              font-size:0.82rem;font-weight:600;">
+      Next →
+    </a>
+  {% endif %}
+
+  <span style="font-size:0.78rem;color:#8b6f5a;margin-left:8px;">
+    Page {{ books.number }} of {{ books.paginator.num_pages }}
+  </span>
+</div>
+{% endif %} 
     {% else %}
       <div class="empty-state">
         <i class="bi bi-journal-x"></i>

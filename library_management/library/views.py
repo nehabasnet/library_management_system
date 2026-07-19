@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
 from .models import Book, Category, ContactInfo, Student, IssueBook
+from django.core.paginator import Paginator 
 
 def home(request):
     return render(request, 'library/index.html')
@@ -36,15 +37,13 @@ def logout_view(request):
 
 # Book Views
 def books(request):
-    query = request.GET.get('q')
+    query       = request.GET.get('q')
     category_id = request.GET.get('category')
-
-    books = Book.objects.all().order_by('category__name')
-    categories = Category.objects.all()
+    books       = Book.objects.all().order_by('category__name')
+    categories  = Category.objects.all()
 
     if category_id:
         books = books.filter(category_id=category_id)
-
     if query:
         books = books.filter(
             Q(title__icontains=query) |
@@ -52,11 +51,16 @@ def books(request):
             Q(category__name__icontains=query)
         )
 
+    paginator = Paginator(books, 12)  
+    page      = request.GET.get('page')
+    books     = paginator.get_page(page)
+
     return render(request, 'library/books.html', {
-        'books': books,
-        'categories': categories,
+        'books':             books,
+        'categories':        categories,
         'selected_category': category_id,
     })
+
 def contact(request):
     contact = ContactInfo.objects.first()
 
@@ -81,6 +85,9 @@ def book_management(request):
             Q(author__icontains=query) |
             Q(isbn__icontains=query)
         )
+    paginator = Paginator(books, 10)  
+    page = request.GET.get('page')       
+    books = paginator.get_page(page)
     return render(request, 'library/book_management.html', {
         'books': books, 'categories': categories, 'query': query,
     })
@@ -168,6 +175,10 @@ def member_management(request):
             Q(student_id__icontains=query) |
             Q(email__icontains=query)
         )
+    paginator = Paginator(students, 10)  
+    page      = request.GET.get('page')
+    students  = paginator.get_page(page)
+
     return render(request, 'library/member_management.html', {
         'students': students,
         'query':    query,
@@ -283,6 +294,10 @@ def issued_list(request):
     records = IssueBook.objects.filter(
         return_date__isnull=True
     ).select_related('student', 'book').order_by('due_date')
+    
+    paginator = Paginator(records, 10) 
+    page      = request.GET.get('page')
+    records   = paginator.get_page(page)
 
     return render(request, 'library/issued_list.html', {
         'records': records,

@@ -107,7 +107,7 @@
       <h5>
         Currently Issued
         <span style="font-size:0.8rem;color:#8b6f5a;font-weight:400;margin-left:8px;">
-          ({{ records|length }} total)
+          ({{ records.paginator.count }} total)
         </span>
       </h5>
     </div>
@@ -173,6 +173,49 @@
           {% endfor %}
         </tbody>
       </table>
+      {% if records.has_other_pages %}
+<div style="display:flex;justify-content:center;align-items:center;
+            gap:6px;padding:16px 24px;border-top:1px solid #f0e8df;">
+
+  {% if records.has_previous %}
+    <a href="?page={{ records.previous_page_number }}"
+       style="padding:6px 14px;border-radius:8px;background:#faf8f5;
+              border:1px solid #e0d5c8;color:#5c3d2e;text-decoration:none;
+              font-size:0.82rem;font-weight:600;">
+      ← Prev
+    </a>
+  {% endif %}
+
+  {% for num in records.paginator.page_range %}
+    {% if records.number == num %}
+      <span style="padding:6px 14px;border-radius:8px;background:#8b5e3c;
+                   color:#fff;font-size:0.82rem;font-weight:600;">
+        {{ num }}
+      </span>
+    {% elif num > records.number|add:'-3' and num < records.number|add:'3' %}
+      <a href="?page={{ num }}"
+         style="padding:6px 14px;border-radius:8px;background:#faf8f5;
+                border:1px solid #e0d5c8;color:#5c3d2e;text-decoration:none;
+                font-size:0.82rem;">
+        {{ num }}
+      </a>
+    {% endif %}
+  {% endfor %}
+
+  {% if records.has_next %}
+    <a href="?page={{ records.next_page_number }}"
+       style="padding:6px 14px;border-radius:8px;background:#faf8f5;
+              border:1px solid #e0d5c8;color:#5c3d2e;text-decoration:none;
+              font-size:0.82rem;font-weight:600;">
+      Next →
+    </a>
+  {% endif %}
+
+  <span style="font-size:0.78rem;color:#8b6f5a;margin-left:8px;">
+    Page {{ records.number }} of {{ records.paginator.num_pages }}
+  </span>
+</div>
+{% endif %}
     {% else %}
       <div class="empty-state">
         <i class="bi bi-inbox"></i>

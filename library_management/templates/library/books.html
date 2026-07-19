@@ -320,6 +320,47 @@
             <p>No books found.</p>
             {% endfor %}
           </div>
+          {% if books.has_other_pages %}
+<div style="display:flex;justify-content:center;gap:6px;
+            margin-top:32px;flex-wrap:wrap;">
+
+  {% if books.has_previous %}
+    <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}page={{ books.previous_page_number }}"
+       style="padding:8px 18px;border-radius:8px;background:#8a5f41;
+              color:#fff;text-decoration:none;font-size:0.85rem;font-weight:600;">
+      ← Prev
+    </a>
+  {% endif %}
+
+  {% for num in books.paginator.page_range %}
+    {% if books.number == num %}
+      <span style="padding:8px 18px;border-radius:8px;background:#5c3d2e;
+                   color:#fff;font-size:0.85rem;font-weight:600;">
+        {{ num }}
+      </span>
+    {% elif num > books.number|add:'-3' and num < books.number|add:'3' %}
+      <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}page={{ num }}"
+         style="padding:8px 18px;border-radius:8px;background:#f5ede6;
+                border:1px solid #c9b99a;color:#5c3d2e;text-decoration:none;
+                font-size:0.85rem;">
+        {{ num }}
+      </a>
+    {% endif %}
+  {% endfor %}
+
+  {% if books.has_next %}
+    <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}page={{ books.next_page_number }}"
+       style="padding:8px 18px;border-radius:8px;background:#8a5f41;
+              color:#fff;text-decoration:none;font-size:0.85rem;font-weight:600;">
+      Next →
+    </a>
+  {% endif %}
+
+  <span style="font-size:0.82rem;color:#888;align-self:center;">
+    Page {{ books.number }} of {{ books.paginator.num_pages }}
+  </span>
+</div>
+{% endif %}
         </section>
       </div>
 

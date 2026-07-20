@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fine Management — LMS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #e8ddd0; font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
+
+    .topbar {
+      background: #5c3d2e; padding: 12px 28px;
+      display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 10px; }
+    .topbar-left .logo-icon {
+      width: 36px; height: 36px; background: #8b5e3c;
+      border-radius: 8px; display: flex; align-items: center;
+      justify-content: center; color: #fff; font-size: 1.1rem;
+    }
+    .topbar-left span { font-size: 0.95rem; font-weight: 600; color: #fff; }
+    .back-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: #8b5e3c; border: none; padding: 7px 14px;
+      border-radius: 8px; font-size: 0.82rem; color: #fff;
+      text-decoration: none; transition: background 0.15s;
+    }
+    .back-btn:hover { background: #a0714f; color: #fff; }
+
+    .page-body { max-width: 1100px; margin: 28px auto; padding: 0 20px; }
+
+    .page-heading { margin-bottom: 20px; }
+    .page-heading h2 { font-size: 1.4rem; font-weight: 700; color: #3d1f0f; margin-bottom: 4px; }
+    .page-heading p  { font-size: 0.85rem; color: #8b6f5a; }
+
+    /* Stat cards */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 16px; margin-bottom: 28px;
+    }
+    .stat-card {
+      background: #fff; border-radius: 14px;
+      padding: 20px 24px; display: flex;
+      align-items: center; gap: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .stat-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .stat-value { font-size: 1.5rem; font-weight: 700; color: #3d1f0f; line-height: 1; }
+    .stat-label { font-size: 0.75rem; color: #8b6f5a; margin-top: 3px; }
+
+    /* Table card */
+    .table-card {
+      background: #fff; border-radius: 16px;
+      overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      margin-bottom: 28px;
+    }
+    .table-header {
+      padding: 16px 24px; border-bottom: 1px solid #f0e8df;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .table-header h5 { font-size: 1rem; font-weight: 700; color: #3d1f0f; margin: 0; }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      background: #faf3ec; font-size: 0.72rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.5px; color: #5c3d2e;
+      padding: 12px 16px; border-bottom: 1px solid #f0e8df; text-align: left;
+    }
+    tbody td {
+      padding: 12px 16px; font-size: 0.85rem;
+      color: #3d1f0f; border-bottom: 1px solid #faf3ec;
+      vertical-align: middle;
+    }
+    tbody tr:hover { background: #fdf8f3; }
+    tbody tr:last-child td { border-bottom: none; }
+
+    .avatar {
+      width: 30px; height: 30px; background: #8b5e3c;
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; color: #fff;
+      font-size: 0.78rem; font-weight: 700; flex-shrink: 0;
+    }
+    .name-cell { display: flex; align-items: center; gap: 8px; }
+
+    .fine-amount {
+      font-weight: 700; color: #ea580c; font-size: 0.9rem;
+    }
+    .fine-pending {
+      font-weight: 700; color: #be123c; font-size: 0.9rem;
+    }
+    .fine-collected {
+      font-weight: 700; color: #166534; font-size: 0.9rem;
+    }
+
+    .badge-overdue {
+      background: #fff1f2; color: #be123c;
+      font-size: 0.72rem; padding: 3px 10px;
+      border-radius: 20px; font-weight: 600;
+    }
+    .badge-collected {
+      background: #f0fdf4; color: #166534;
+      font-size: 0.72rem; padding: 3px 10px;
+      border-radius: 20px; font-weight: 600;
+    }
+
+    .btn-return {
+      background: #7a4f35; color: #fff; border: none;
+      padding: 5px 14px; border-radius: 6px;
+      font-size: 0.78rem; font-weight: 600;
+      text-decoration: none; transition: background 0.15s;
+    }
+    .btn-return:hover { background: #5c3d2e; color: #fff; }
+
+    .empty-state { text-align: center; padding: 40px 20px; color: #8b6f5a; }
+    .empty-state i { font-size: 2.5rem; opacity: 0.4; display: block; margin-bottom: 10px; }
+
+    @media (max-width: 700px) {
+      .stats-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo-icon"><i class="bi bi-book-half"></i></div>
+    <span>Library Management System</span>
+  </div>
+  <a href="{% url 'dashboard' %}" class="back-btn">
+    <i class="bi bi-arrow-left"></i> Back to Dashboard
+  </a>
+</div>
+
+<div class="page-body">
+
+  <div class="page-heading">
+    <h2>Fine Management</h2>
+  </div>
+
+  <!-- ── Stats ── -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#fff7ed;">
+        <i class="bi bi-cash-coin" style="color:#ea580c;"></i>
+      </div>
+      <div>
+        <div class="stat-value">NPR {{ total_all }}</div>
+        <div class="stat-label">Total Fines (All)</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#fff1f2;">
+        <i class="bi bi-exclamation-triangle" style="color:#be123c;"></i>
+      </div>
+      <div>
+        <div class="stat-value">NPR {{ total_pending }}</div>
+        <div class="stat-label">Pending Fines (Overdue)</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#f0fdf4;">
+        <i class="bi bi-check-circle" style="color:#166534;"></i>
+      </div>
+      <div>
+        <div class="stat-value">NPR {{ total_collected }}</div>
+        <div class="stat-label">Collected Fines</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Pending Fines (Overdue books not yet returned) ── -->
+  <div class="table-card">
+    <div class="table-header">
+      <h5>
+        <i class="bi bi-exclamation-triangle" style="color:#be123c;margin-right:6px;"></i>
+        Pending Fines — Overdue Books
+        <span style="font-size:0.8rem;color:#8b6f5a;font-weight:400;margin-left:8px;">
+          ({{ pending_records|length }} records)
+        </span>
+      </h5>
+    </div>
+
+    {% if pending_records %}
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Student</th>
+            <th>Book</th>
+            <th>Due Date</th>
+            <th>Days Overdue</th>
+            <th>Pending Fine</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in pending_records %}
+          <tr>
+            <td style="color:#8b6f5a;">{{ forloop.counter }}</td>
+            <td>
+              <div class="name-cell">
+                <div class="avatar">{{ item.record.student.full_name|first|upper }}</div>
+                <div>
+                  <div style="font-weight:600;">{{ item.record.student.full_name }}</div>
+                  <div style="font-size:0.75rem;color:#8b6f5a;">{{ item.record.student.student_id }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <strong>{{ item.record.book.title }}</strong><br/>
+              <span style="font-size:0.75rem;color:#8b6f5a;">{{ item.record.book.author }}</span>
+            </td>
+            <td style="color:#be123c;font-weight:600;">{{ item.record.due_date }}</td>
+            <td>
+              <span style="color:#be123c;font-weight:600;">
+                {{ item.overdue_days }} day{{ item.overdue_days|pluralize }}
+              </span>
+            </td>
+            <td>
+              <span class="fine-pending">NPR {{ item.pending_fine }}</span>
+            </td>
+            <td><span class="badge-overdue">Overdue</span></td>
+            <td>
+              <a href="{% url 'return_book' item.record.pk %}" class="btn-return">
+                <i class="bi bi-arrow-counterclockwise me-1"></i>Return Now
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="empty-state">
+        <i class="bi bi-check-circle" style="color:#166534;opacity:1;"></i>
+        <p style="font-weight:600;margin-bottom:4px;color:#166634;">No overdue books!</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- ── Collected Fines (returned books with fines) ── -->
+  <div class="table-card">
+    <div class="table-header">
+      <h5>
+        <i class="bi bi-check-circle" style="color:#166534;margin-right:6px;"></i>
+        Collected Fines — Returned Books
+        <span style="font-size:0.8rem;color:#8b6f5a;font-weight:400;margin-left:8px;">
+          ({{ collected.paginator.count }} records)
+        </span>
+      </h5>
+    </div>
+
+    {% if collected %}
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Student</th>
+            <th>Book</th>
+            <th>Issue Date</th>
+            <th>Due Date</th>
+            <th>Return Date</th>
+            <th>Days Overdue</th>
+            <th>Fine Collected</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in collected %}
+          {% with days=record.return_date|timeuntil:record.due_date %}
+          <tr>
+            <td style="color:#8b6f5a;">{{ forloop.counter }}</td>
+            <td>
+              <div class="name-cell">
+                <div class="avatar">{{ record.student.full_name|first|upper }}</div>
+                <div>
+                  <div style="font-weight:600;">{{ record.student.full_name }}</div>
+                  <div style="font-size:0.75rem;color:#8b6f5a;">{{ record.student.student_id }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <strong>{{ record.book.title }}</strong><br/>
+              <span style="font-size:0.75rem;color:#8b6f5a;">{{ record.book.author }}</span>
+            </td>
+            <td>{{ record.issue_date }}</td>
+            <td>{{ record.due_date }}</td>
+            <td>{{ record.return_date }}</td>
+            <td style="color:#8b6f5a;">
+              {{ record.return_date|timeuntil:record.due_date }}
+            </td>
+            <td><span class="fine-collected">NPR {{ record.fine }}</span></td>
+          </tr>
+          {% endwith %}
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      {% if collected.has_other_pages %}
+      <div style="display:flex;justify-content:center;align-items:center;
+                  gap:6px;padding:16px 24px;border-top:1px solid #f0e8df;">
+        {% if collected.has_previous %}
+          <a href="?page={{ collected.previous_page_number }}"
+             style="padding:6px 14px;border-radius:8px;background:#faf8f5;
+                    border:1px solid #e0d5c8;color:#5c3d2e;text-decoration:none;
+                    font-size:0.82rem;font-weight:600;">← Prev</a>
+        {% endif %}
+        {% for num in collected.paginator.page_range %}
+          {% if collected.number == num %}
+            <span style="padding:6px 14px;border-radius:8px;background:#8b5e3c;
+                         color:#fff;font-size:0.82rem;font-weight:600;">{{ num }}</span>
+          {% elif num > collected.number|add:'-3' and num < collected.number|add:'3' %}
+            <a href="?page={{ num }}"
+               style="padding:6px 14px;border-radius:8px;background:#faf8f5;
+                      border:1px solid #e0d5c8;color:#5c3d2e;text-decoration:none;
+                      font-size:0.82rem;">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+        {% if collected.has_next %}
+          <a href="?page={{ collected.next_page_number }}"
+             style="padding:6px 14px;border-radius:8px;background:#faf8f5;
+                    border:1px solid #e0d5c8;color:#5c3d2e;text-decoration:none;
+                    font-size:0.82rem;font-weight:600;">Next →</a>
+        {% endif %}
+        <span style="font-size:0.78rem;color:#8b6f5a;margin-left:8px;">
+          Page {{ collected.number }} of {{ collected.paginator.num_pages }}
+        </span>
+      </div>
+      {% endif %}
+
+    {% else %}
+      <div class="empty-state">
+        <i class="bi bi-inbox"></i>
+        <p style="font-weight:600;margin-bottom:4px;">No fines collected yet</p>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+</body>
+</html>

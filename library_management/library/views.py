@@ -344,3 +344,49 @@ def return_book(request, pk):
         'overdue_days': overdue_days,
         'fine_preview': fine_preview,
     })
+
+#Fine Management
+
+# ── Fine Management (Day 7) ───────────────────────────────────────
+
+@login_required
+def fine_management(request):
+    today = date.today()
+
+    collected = IssueBook.objects.filter(
+        return_date__isnull=False,
+        fine__gt=0
+    ).select_related('student', 'book').order_by('-return_date')
+
+    overdue = IssueBook.objects.filter(
+        return_date__isnull=True,
+        due_date__lt=today
+    ).select_related('student', 'book').order_by('due_date')
+
+    pending_records = []
+    for record in overdue:
+        days = (today - record.due_date).days
+        fine = days * 5
+        pending_records.append({
+            'record':       record,
+            'overdue_days': days,
+            'pending_fine': fine,
+        })
+
+   
+    total_collected = sum(r.fine for r in collected)
+    total_pending   = sum(p['pending_fine'] for p in pending_records)
+    total_all       = total_collected + total_pending
+
+    paginator = Paginator(collected, 10)
+    page      = request.GET.get('page')
+    collected = paginator.get_page(page)
+
+    return render(request, 'library/fine_management.html', {
+        'collected':       collected,
+        'pending_records': pending_records,
+        'total_collected': total_collected,
+        'total_pending':   total_pending,
+        'total_all':       total_all,
+        'today':           today,
+    })

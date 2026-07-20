@@ -143,7 +143,7 @@
               <span style="font-size:0.75rem;color:#8b6f5a;">{{ record.book.author }}</span>
             </td>
             <td>{{ record.issue_date }}</td>
-            <td style ="{% if record.due_date < today %}color:#be123c; font-weight:600;{% endif %}">
+            <td style="{% if record.due_date < today %}color:#be123c;font-weight:600;{% endif %}">
               {{ record.due_date }}
             </td>
             <td>

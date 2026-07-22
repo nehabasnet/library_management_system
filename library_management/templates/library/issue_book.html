@@ -134,7 +134,14 @@
 
     .empty-state { text-align: center; padding: 40px 20px; color: #8b6f5a; }
     .empty-state i { font-size: 2.5rem; opacity: 0.4; display: block; margin-bottom: 10px; }
-
+    
+    @media (max-width: 768px) {
+      .page-body { padding: 0 12px; margin: 16px auto; }
+      .form-card  { padding: 16px 18px; }
+      .form-row   { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; white-space: nowrap; }
+      .topbar { padding: 10px 16px; }
+    }
     @media (max-width: 600px) {
       .form-row { grid-template-columns: 1fr; }
     }

@@ -143,6 +143,40 @@
     .card-6 { background: #3d1f0f; }
 
     /* ── Responsive ── */
+    @media (max-width: 768px) {
+     .topbar {
+       padding: 10px 16px;
+     }
+     .topbar-left span {
+       font-size: 0.82rem;
+     }
+     .welcome-section h1 {
+       font-size: 1.2rem;
+       letter-spacing: 2px;
+     }
+     .card-grid {
+       grid-template-columns: repeat(2, 1fr);
+       padding: 8px 16px 24px;
+       gap: 12px;
+     }
+     .dash-card {
+       padding: 24px 10px 16px;
+     }
+    .dash-card i { font-size: 2rem; }
+    .dash-card span { font-size: 0.82rem; }
+    .dash-card small { font-size: 0.68rem; }
+   }
+
+    @media (max-width: 480px) {
+     .card-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 8px 12px 20px;
+      }
+     .dash-card {
+       padding: 20px 8px 14px;
+     }
+    }
     @media (max-width: 600px) {
       .card-grid {
         grid-template-columns: repeat(2, 1fr);

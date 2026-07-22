@@ -83,6 +83,16 @@
       text-decoration: none; transition: background 0.15s;
     }
     .btn-return:hover { background: #5c3d2e; color: #fff; }
+    @media (max-width: 768px) {
+       .page-body { padding: 0 12px; margin: 16px auto; }
+       .table-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
+        table { display: block; overflow-x: auto; white-space: nowrap; }
+        .topbar { padding: 10px 16px; }
+     }
   </style>
 </head>
 <body>

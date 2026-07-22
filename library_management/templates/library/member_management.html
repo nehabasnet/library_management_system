@@ -143,6 +143,21 @@
     @media (max-width: 500px) {
       .form-row { grid-template-columns: 1fr; }
     }
+    @media (max-width: 768px) {
+      .page-body { padding: 0 12px; margin: 16px auto; }
+      .form-row   { grid-template-columns: 1fr 1fr; }
+      .form-card  { padding: 16px; }
+      .table-header {
+         flex-direction: column;
+         align-items: flex-start;
+         gap: 10px;
+       }
+      .search-wrap input { width: 100%; }
+      table { display: block; overflow-x: auto; white-space: nowrap; }
+    }
+    @media (max-width: 480px) {
+     .form-row { grid-template-columns: 1fr; }
+   }
   </style>
 </head>
 <body>

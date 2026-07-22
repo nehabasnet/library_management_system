@@ -133,6 +133,16 @@
       border: none; border-top: 1px solid #f0e8df;
       margin: 20px 0;
     }
+    @media (max-width: 768px) {
+      .page-body { padding: 0 12px; margin: 20px auto; }
+      .return-card { padding: 20px; }
+      .info-grid  { grid-template-columns: 1fr; }
+      .dates-row  { grid-template-columns: 1fr 1fr; }
+      .topbar { padding: 10px 16px; }
+    }
+    @media (max-width: 480px) {
+       .dates-row { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>

@@ -390,3 +390,45 @@ def fine_management(request):
         'total_all':       total_all,
         'today':           today,
     })
+
+# Book history
+
+@login_required
+def book_history(request):
+    today  = date.today()
+    query  = request.GET.get('q', '')
+    filter_by = request.GET.get('filter', 'all')
+
+    records = IssueBook.objects.select_related(
+        'student', 'book'
+    ).all().order_by('-issue_date')
+
+    # Search
+    if query:
+        records = records.filter(
+            Q(student__full_name__icontains=query) |
+            Q(student__student_id__icontains=query) |
+            Q(book__title__icontains=query)
+        )
+
+    # Filter
+    if filter_by == 'returned':
+        records = records.filter(return_date__isnull=False)
+    elif filter_by == 'issued':
+        records = records.filter(return_date__isnull=True)
+    elif filter_by == 'overdue':
+        records = records.filter(
+            return_date__isnull=True,
+            due_date__lt=today
+        )
+
+    paginator = Paginator(records, 10)
+    page      = request.GET.get('page')
+    records   = paginator.get_page(page)
+
+    return render(request, 'library/book_history.html', {
+        'records':   records,
+        'today':     today,
+        'query':     query,
+        'filter_by': filter_by,
+    })

@@ -21,5 +21,6 @@ urlpatterns = [
     path('issued-list/', views.issued_list,  name='issued_list'),
     path('return-book/<int:pk>/', views.return_book, name='return_book'),
     path('fine-management/', views.fine_management, name='fine_management'),
+    path('book-history/', views.book_history, name='book_history'),
 ]
 

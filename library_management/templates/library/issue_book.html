@@ -10,25 +10,180 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: #e8ddd0; font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
 
-    .topbar {
-      background: #5c3d2e; padding: 12px 28px;
-      display: flex; justify-content: space-between; align-items: center;
-      position: sticky; top: 0; z-index: 100;
+    .admin-layout {
+      display: flex;
+     min-height: 100vh;
     }
-    .topbar-left { display: flex; align-items: center; gap: 10px; }
-    .topbar-left .logo-icon {
-      width: 36px; height: 36px; background: #8b5e3c;
-      border-radius: 8px; display: flex; align-items: center;
-      justify-content: center; color: #fff; font-size: 1.1rem;
+
+
+    .sidebar {
+      width: 240px;
+      background: #6b3a1f;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0;
+      height: 100vh;
+      z-index: 200;
+      transition: width 0.2s ease;
+      overflow: hidden;
     }
-    .topbar-left span { font-size: 0.95rem; font-weight: 600; color: #fff; }
-    .back-btn {
-      display: flex; align-items: center; gap: 6px;
-      background: #8b5e3c; border: none; padding: 7px 14px;
-      border-radius: 8px; font-size: 0.82rem; color: #fff;
-      text-decoration: none; transition: background 0.15s;
+    .sidebar.collapsed { width: 64px; }
+
+    .sidebar-brand {
+       height: 55px;
+       display: flex;
+       align-items: center;
+       justify-content: space-between;
+       padding: 0 16px;
+       border-bottom: 1px solid #3b2a1f;
+       flex-shrink: 0;
     }
-    .back-btn:hover { background: #a0714f; color: #fff; }
+    .brand-left {
+       display: flex;
+       align-items: center;
+       gap: 10px;
+       overflow: hidden;
+    }
+    .brand-left i    { color: white; font-size: 1.3rem; flex-shrink: 0; }
+    .brand-left span {
+       color: #fff; font-size: 0.95rem; font-weight: 700;
+       white-space: nowrap; opacity: 1; transition: opacity 0.15s;
+    }
+    .sidebar.collapsed .brand-left span { opacity: 0; }
+
+    .toggle-btn {
+       background: none; border: none;
+       color: white; cursor: pointer;
+       font-size: 1.2rem; padding: 6px;
+       border-radius: 6px; flex-shrink: 0;
+       transition: background 0.15s;
+    } 
+    .toggle-btn:hover { background: #3d1f0f; color: #fff; }
+    .nav-section-label {
+       font-size: 0.68rem; font-weight: 600;
+       letter-spacing: 1px; text-transform: uppercase;
+       color: white; padding: 14px 20px 4px;
+       white-space: nowrap; opacity: 1;
+       transition: opacity 0.15s;
+    }
+    .sidebar.collapsed .nav-section-label { opacity: 0; }
+
+    .sidebar-nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 8px 0; }
+
+    .sidebar-link {
+       display: flex;
+       align-items: center;
+       gap: 12px;
+       padding: 10px 20px;
+       color: #f8f8f7;
+       text-decoration: none;
+       font-size: 0.875rem;
+       border-left: 3px solid transparent;
+       white-space: nowrap;
+       transition: all 0.15s;
+    }
+    .sidebar-link i      { font-size: 1.1rem; flex-shrink: 0; min-width:20px; display:inline-flex !important; visibility:visible !important; }
+    .sidebar-link span   { opacity: 1; transition: opacity 0.15s; }
+    .sidebar-link:hover  { background: rgba(0,0,0,0.2); color: #fff; }
+    .sidebar-link.active { background:rgba(0,0,0,0.25); color: #fff; border-left-color: #f0c98a; }
+  
+    .sidebar.collapsed .sidebar-link             { padding: 10px 0; justify-content: center; }
+
+
+    .sidebar-link { position: relative; }
+    .sidebar-link .nav-tooltip {
+       display: none;
+       position: absolute;
+       left: 68px; top: 50%;
+       transform: translateY(-50%);
+       background: #3d1f0f;
+       color: #fff; font-size: 0.78rem;
+       padding: 5px 10px; border-radius: 6px;
+       white-space: nowrap; z-index: 300;
+       pointer-events: none;
+    }
+    .sidebar.collapsed .sidebar-link:hover .nav-tooltip { display: block; }
+    .sidebar.collapsed .sidebar-link span:not(.nav-tooltip) { 
+        opacity: 0; 
+        width: 0;
+        overflow: hidden;
+    }
+    .sidebar-footer {
+       padding: 14px 16px;
+       border-top: 1px solid #3b2a1f;
+       display: flex;
+       align-items: center;
+       gap: 10px;
+       flex-shrink: 0;
+    }
+    .user-avatar {
+       width: 32px; height: 32px;
+       background: rgba(0,0,0,0.2); border-radius: 50%;
+       display: flex; align-items: center; justify-content: center;
+       color: #fff; font-size: 0.82rem; font-weight: 700;
+       flex-shrink: 0;
+    }
+    .user-info        { flex: 1; overflow: hidden; opacity: 1; transition: opacity 0.15s; }
+    .user-info span   { color: white; font-size: 0.82rem; white-space: nowrap; display: block; }
+    .sidebar.collapsed .user-info { opacity: 0; }
+    .logout-btn {
+       color: white; text-decoration: none;
+       font-size: 1.1rem; padding: 4px;
+       border-radius: 6px; transition: all 0.15s;
+       flex-shrink: 0;
+    }
+    .logout-btn:hover { color: #ef4444; background: rgba(0,0,0,0.2); }
+
+    .main-content {
+       margin-left: 240px;
+       flex: 1;
+       display: flex;
+       flex-direction: column;
+       min-height: 100vh;
+       transition: margin-left 0.2s ease;
+    }
+    .main-content.expanded { margin-left: 64px; }
+
+    .mini-topbar {
+       height: 56px;
+       background: #fff;
+       border-bottom: 2px solid #e8ddd0;
+       display: flex;
+       align-items: center;
+       justify-content: space-between;
+       padding: 0 24px;
+       position: sticky;
+       top: 0; z-index: 100;
+       box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .mini-topbar h4 {
+       font-size: 1.1rem; font-weight: 700; color: #3d1f0f; margin: 0;
+    }
+    .mini-topbar-right {
+       display: flex; align-items: center; gap: 8px;
+    }
+    .mini-topbar-right .avatar {
+       width: 34px; height: 34px;
+       background: #6b3a1f; border-radius: 50%;
+       display: flex; align-items: center; justify-content: center;
+       color: #fff; font-size: 0.78rem; font-weight: 700;
+    }
+    .mini-topbar-right span { font-size: 0.82rem; color: #8b6f5a; }
+
+    .page-body { padding: 24px; flex: 1; }
+
+
+    @media (max-width: 768px) {
+      .sidebar         { width: 64px; }
+      .sidebar .brand-left span   { opacity: 0; }
+      .sidebar .sidebar-link span     { opacity: 0; }
+      .sidebar .nav-section-label { opacity: 0; }
+      .sidebar .sidebar-link          { padding: 10px 0; justify-content: center; }
+      .sidebar .user-info         { opacity: 0; }
+      .sidebar.collapsed .sidebar-link:hover .nav-tooltip { display: block; }
+      .main-content { margin-left: 64px; }
+   }
 
     .page-body { max-width: 1000px; margin: 28px auto; padding: 0 20px; }
 
@@ -149,16 +304,89 @@
 </head>
 <body>
 
-<div class="topbar">
-  <div class="topbar-left">
-    <div class="logo-icon"><i class="bi bi-book-half"></i></div>
-    <span>Library Management System</span>
-  </div>
-  <a href="{% url 'dashboard' %}" class="back-btn">
-    <i class="bi bi-arrow-left"></i> Back to Dashboard
-  </a>
-</div>
+<div class="admin-layout">
+      
+    <aside class="sidebar" id="sidebar">
 
+       <div class="sidebar-brand">
+         <div class="brand-left">
+            <i class="bi bi-book-half"></i>
+            <span>LibraryMS</span>
+       </div>
+       <button class="toggle-btn" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+         <i class="bi bi-layout-sidebar-reverse" id="toggle-icon"></i>
+       </button>
+      </div>
+
+      <div class="sidebar-nav">
+
+        <div class="nav-section-label">Main</div>
+        <a href="{% url 'dashboard' %}" class="sidebar-link" id="link-dashboard">
+           <i class="bi bi-grid-1x2"></i>
+           <span>Dashboard</span>
+           <span class="nav-tooltip">Dashboard</span>
+        </a>
+
+        <div class="nav-section-label">Books</div>
+        <a href="{% url 'book_management' %}" class="sidebar-link" id="link-books">
+           <i class="bi bi-journals"></i>
+           <span>Book Management</span>
+           <span class="nav-tooltip">Book Management</span>
+       </a>
+
+       <div class="nav-section-label">People</div>
+       <a href="{% url 'member_management' %}" class="sidebar-link" id="link-members">
+           <i class="bi bi-people"></i>
+           <span>Members</span>
+           <span class="nav-tooltip">Members</span>
+       </a>
+
+       <div class="nav-section-label">Transactions</div>
+       <a href="{% url 'issue_book' %}" class="sidebar-link" id="link-issue">
+         <i class="bi bi-arrow-up-right-circle"></i>
+         <span>Issue Book</span>
+         <span class="nav-tooltip">Issue Book</span>
+       </a>
+       <a href="{% url 'issued_list' %}" class="sidebar-link" id="link-issued">
+         <i class="bi bi-clock-history"></i>
+         <span>Issued Books</span>
+         <span class="nav-tooltip">Issued Books</span>
+         </a>
+         <a href="{% url 'fine_management' %}" class="sidebar-link" id="link-fines">
+           <i class="bi bi-cash-coin"></i>
+           <span>Fine Management</span>
+           <span class="nav-tooltip">Fine Management</span>
+         </a>
+         <a href="{% url 'book_history' %}" class="sidebar-link" id="link-history">
+           <i class="bi bi-archive"></i>
+           <span>Book History</span>
+           <span class="nav-tooltip">Book History</span>
+           </a>
+
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-avatar">{{ request.user.username|first|upper }}</div>
+        <div class="user-info">
+           <span>{{ request.user.username }}</span>
+        </div>
+        <a href="{% url 'logout' %}" class="logout-btn"
+           title="Sign out"
+           onclick="return confirm('Sign out?')">
+           <i class="bi bi-box-arrow-right"></i>
+        </a>
+      </div>
+
+    </aside>
+    <script>document.getElementById('link-issue').classList.add('active');</script>
+    <div class="main-content" id="mainContent">
+        <div class="mini-topbar">
+          <h4>Issue Book</h4>
+          <div class="mini-topbar-right">
+            <div class="avatar">{{ request.user.username|first|upper }}</div>
+            <span>{{ request.user.username }}</span>
+          </div>
+        </div>
 <div class="page-body">
 
   <div class="page-heading">
@@ -298,5 +526,24 @@
   </div>
 
 </div>
+  </div>
+<script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const main    = document.getElementById('mainContent');
+    const icon    = document.getElementById('toggle-icon');
+    sidebar.classList.toggle('collapsed');
+    main.classList.toggle('expanded');
+    icon.className = sidebar.classList.contains('collapsed')
+      ? 'bi bi-layout-sidebar'
+      : 'bi bi-layout-sidebar-reverse';
+    localStorage.setItem('sidebar', sidebar.classList.contains('collapsed') ? 'collapsed' : 'open');
+  }
+  if (localStorage.getItem('sidebar') === 'collapsed') {
+    document.getElementById('sidebar').classList.add('collapsed');
+    document.getElementById('mainContent').classList.add('expanded');
+    document.getElementById('toggle-icon').className = 'bi bi-layout-sidebar';
+  }
+</script>
 </body>
 </html>

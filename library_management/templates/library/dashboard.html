@@ -176,6 +176,7 @@
      .dash-card {
        padding: 20px 8px 14px;
      }
+     .topbar-right a span { display: none; }
     }
     @media (max-width: 600px) {
       .card-grid {
@@ -195,10 +196,22 @@
     <span>Library Management System</span>
   </div>
   <div class="topbar-right">
+    <a href="{% url 'home' %}"
+       style="display:flex;align-items:center;gap:6px;
+              background:rgba(255,255,255,0.15);color:#fff;
+              text-decoration:none;font-size:0.8rem;
+              font-weight:600;padding:6px 12px;
+              border-radius:8px;border:1px solid rgba(255,255,255,0.3);
+              transition:all 0.15s;margin-right:4px;"
+       onmouseover="this.style.background='rgba(255,255,255,0.25)'"
+       onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+      <i class="bi bi-house"></i>
+      <span>View Site</span>
+    </a>
     <div class="avatar">{{ request.user.username|first|upper }}</div>
     <span>{{ request.user.username }}</span>
     <span class="breadcrumb-text">› Dashboard</span>
-  </div>
+</div>
 </div>
 
 <!-- Welcome -->

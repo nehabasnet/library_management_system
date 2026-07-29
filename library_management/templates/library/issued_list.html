@@ -25,7 +25,7 @@
       top: 0; left: 0;
       height: 100vh;
       z-index: 200;
-      transition: width 0.2s ease;
+      transition: width 0.2s ease, transform 0.2s ease;
       overflow: hidden;
     }
     .sidebar.collapsed { width: 64px; }
@@ -138,10 +138,12 @@
     .main-content {
        margin-left: 240px;
        flex: 1;
+       min-width: 0;
        display: flex;
        flex-direction: column;
        min-height: 100vh;
        transition: margin-left 0.2s ease;
+       overflow-x: hidden;
     }
     .main-content.expanded { margin-left: 64px; }
 
@@ -171,25 +173,95 @@
     }
     .mini-topbar-right span { font-size: 0.82rem; color: #8b6f5a; }
 
-    .page-body { padding: 24px; flex: 1; }
+    .page-body { padding: 24px; flex: 1; min-width: 0;}
 
 
-    @media (max-width: 768px) {
-      .sidebar         { width: 64px; }
-      .sidebar .brand-left span   { opacity: 0; }
-      .sidebar .sidebar-link span     { opacity: 0; }
-      .sidebar .nav-section-label { opacity: 0; }
-      .sidebar .sidebar-link          { padding: 10px 0; justify-content: center; }
-      .sidebar .user-info         { opacity: 0; }
-      .sidebar.collapsed .sidebar-link:hover .nav-tooltip { display: block; }
-      .main-content { margin-left: 64px; }
-   }
-
-    .page-body { max-width: 1100px; margin: 28px auto; padding: 0 20px; }
+    
+    .page-body { max-width: 1100px; margin: 28px auto; padding: 0 20px; width: 100%; }
     .page-heading { margin-bottom: 20px; }
     .page-heading h2 { font-size: 1.4rem; font-weight: 700; color: #3d1f0f; margin-bottom: 4px; }
     .page-heading p  { font-size: 0.85rem; color: #8b6f5a; }
+@media (max-width: 768px) {
+  .sidebar { width: 64px; }
+  .sidebar .brand-left span { opacity: 0; width: 0; overflow: hidden; }
+  .sidebar .nav-section-label { opacity: 0; }
+  .sidebar .sidebar-link { padding: 10px 0; justify-content: center; }
+  .sidebar .sidebar-link span:not(.nav-tooltip) { opacity: 0; width: 0; overflow: hidden; }
+  .sidebar .user-info { opacity: 0; width: 0; overflow: hidden; }
+  .main-content { margin-left: 64px; }
+  .hamburger-btn { display: none !important; }
+  table { display: block; overflow-x: auto; white-space: nowrap; }
+  .table-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .search-wrap input { width: 140px; }
+}
 
+/* ── Mobile 480px and below: hidden sidebar ── */
+@media (max-width: 480px) {
+  .sidebar {
+    width: 240px !important;
+    transform: translateX(-100%);
+  }
+  .sidebar.mobile-open {
+    transform: translateX(0) !important;
+  }
+  /* Reset collapsed state on mobile */
+  .sidebar.collapsed {
+    width: 240px !important;
+  }
+  .main-content {
+    margin-left: 0 !important;
+  }
+  .main-content.expanded {
+    margin-left: 0 !important;
+  }
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 199;
+  }
+  .sidebar-overlay.active { display: block; }
+
+  /* Show hamburger on mobile */
+  .hamburger-btn { display: flex !important; }
+
+  /* Make content fit screen */
+  .page-body {
+    max-width: 100% !important;
+    margin: 16px 0 !important;
+    padding: 0 12px !important;
+    overflow-x: hidden;
+  }
+
+  /* Stack all form grids to single column */
+  .form-row   { grid-template-columns: 1fr !important; }
+  .form-row-2 { grid-template-columns: 1fr !important; }
+
+  /* Make tables scrollable */
+  table { display: block; overflow-x: auto; white-space: nowrap; }
+  .table-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .search-wrap { width: 100%; }
+  .search-wrap input { width: 100%; }
+
+  /* Mini topbar on mobile */
+  .mini-topbar { padding: 0 12px; }
+  .mini-topbar h4 { font-size: 0.9rem; }
+  .mini-topbar-right span { display: none; }
+  .mini-topbar-right a span { display: none; }
+
+  /* Cards */
+  .form-card { padding: 16px; }
+  .return-card { padding: 20px; }
+  .info-grid { grid-template-columns: 1fr !important; }
+  .dates-row { grid-template-columns: 1fr 1fr !important; }
+  .stats-row { grid-template-columns: 1fr !important; }
+  .filter-tabs { flex-wrap: wrap; }
+}
     .table-card {
       background: #fff; border-radius: 16px;
       overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
@@ -254,7 +326,7 @@
 <body>
 
 <div class="admin-layout">
-      
+      <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobile()"></div>
     <aside class="sidebar" id="sidebar">
 
        <div class="sidebar-brand">
@@ -329,13 +401,34 @@
     </aside>
     <script>document.getElementById('link-issued').classList.add('active');</script>
     <div class="main-content" id="mainContent">
-        <div class="mini-topbar">
-          <h4>Issued Books</h4>
-          <div class="mini-topbar-right">
-            <div class="avatar">{{ request.user.username|first|upper }}</div>
-            <span>{{ request.user.username }}</span>
-          </div>
-        </div>
+   <div class="mini-topbar">
+  <button class="hamburger-btn"
+          onclick="toggleMobile()"
+          aria-label="Open menu"
+          style="display:none;background:none;border:none;
+                 color:#3d1f0f;font-size:1.4rem;cursor:pointer;
+                 padding:4px 8px;margin-right:8px;
+                 align-items:center;border-radius:6px;">
+    <i class="bi bi-list" id="hamburger-icon"></i>
+  </button>
+  <h4>All Issued Books</h4>
+  <div class="mini-topbar-right">
+    <a href="{% url 'home' %}"
+       style="display:flex;align-items:center;gap:6px;
+              background:#f5ede6;color:#6b3a1f;
+              text-decoration:none;font-size:0.8rem;
+              font-weight:600;padding:6px 12px;
+              border-radius:8px;border:1px solid #e0d5c8;
+              transition:all 0.15s;margin-right:8px;"
+       onmouseover="this.style.background='#6b3a1f';this.style.color='#fff'"
+       onmouseout="this.style.background='#f5ede6';this.style.color='#6b3a1f'">
+      <i class="bi bi-house"></i>
+      <span>View Site</span>
+    </a>
+    <div class="avatar">{{ request.user.username|first|upper }}</div>
+    <span>{{ request.user.username }}</span>
+  </div>
+</div>
     <div class="page-body">
   <div class="page-heading">
     <h2>All Issued Books</h2>
@@ -471,24 +564,78 @@
 </div>
     </div>
 <script>
-  function toggleSidebar() {
+ function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const main    = document.getElementById('mainContent');
     const icon    = document.getElementById('toggle-icon');
+
     sidebar.classList.toggle('collapsed');
     main.classList.toggle('expanded');
     icon.className = sidebar.classList.contains('collapsed')
       ? 'bi bi-layout-sidebar'
       : 'bi bi-layout-sidebar-reverse';
-    localStorage.setItem('sidebar', sidebar.classList.contains('collapsed') ? 'collapsed' : 'open');
+    localStorage.setItem('sidebar',
+      sidebar.classList.contains('collapsed') ? 'collapsed' : 'open');
   }
 
- 
-  if (localStorage.getItem('sidebar') === 'collapsed') {
-    document.getElementById('sidebar').classList.add('collapsed');
-    document.getElementById('mainContent').classList.add('expanded');
-    document.getElementById('toggle-icon').className = 'bi bi-layout-sidebar';
+  // ── Mobile toggle (show/hide sidebar fully) ──
+  function toggleMobile() {
+    const sidebar  = document.getElementById('sidebar');
+    const overlay  = document.getElementById('sidebarOverlay');
+    const hIcon    = document.getElementById('hamburger-icon');
+
+    sidebar.classList.toggle('mobile-open');
+    overlay.classList.toggle('active');
+    hIcon.className = sidebar.classList.contains('mobile-open')
+      ? 'bi bi-x-lg'
+      : 'bi bi-list';
   }
+
+  // ── Remember sidebar state on page load ──
+  function initSidebar() {
+    const isMobile = window.innerWidth <= 480;
+    const isTablet = window.innerWidth <= 768;
+
+    if (isMobile) {
+      // Mobile: hamburger controls it, ignore localStorage
+      document.querySelector('.hamburger-btn').style.display = 'flex';
+      return;
+    }
+
+    if (isTablet) {
+      // Tablet: always icon-only
+      document.querySelector('.hamburger-btn').style.display = 'flex';
+      return;
+    }
+
+    // Desktop: restore from localStorage
+    if (localStorage.getItem('sidebar') === 'collapsed') {
+      document.getElementById('sidebar').classList.add('collapsed');
+      document.getElementById('mainContent').classList.add('expanded');
+      document.getElementById('toggle-icon').className = 'bi bi-layout-sidebar';
+    }
+  }
+
+  // ── Handle window resize ──
+  window.addEventListener('resize', function() {
+    const isMobile = window.innerWidth <= 480;
+    const hamburger = document.querySelector('.hamburger-btn');
+    const overlay   = document.getElementById('sidebarOverlay');
+    const sidebar   = document.getElementById('sidebar');
+
+    if (isMobile) {
+      hamburger.style.display = 'flex';
+      // Close sidebar if open when resizing to mobile
+      sidebar.classList.remove('mobile-open');
+      overlay.classList.remove('active');
+    } else {
+      hamburger.style.display = 'none';
+      sidebar.classList.remove('mobile-open');
+      overlay.classList.remove('active');
+    }
+  });
+
+  initSidebar();
 </script>
 
 </body>

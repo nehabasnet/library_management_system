@@ -195,22 +195,59 @@
     <div class="logo-icon"><i class="bi bi-book-half"></i></div>
     <span>Library Management System</span>
   </div>
-  <div class="topbar-right">
-    <a href="{% url 'home' %}"
-       style="display:flex;align-items:center;gap:6px;
-              background:rgba(255,255,255,0.15);color:#fff;
-              text-decoration:none;font-size:0.8rem;
-              font-weight:600;padding:6px 12px;
-              border-radius:8px;border:1px solid rgba(255,255,255,0.3);
-              transition:all 0.15s;margin-right:4px;"
-       onmouseover="this.style.background='rgba(255,255,255,0.25)'"
-       onmouseout="this.style.background='rgba(255,255,255,0.15)'">
-      <i class="bi bi-house"></i>
-      <span>View Site</span>
-    </a>
-    <div class="avatar">{{ request.user.username|first|upper }}</div>
-    <span>{{ request.user.username }}</span>
-    <span class="breadcrumb-text">› Dashboard</span>
+     <div class="topbar-right">
+  <a href="{% url 'home' %}"
+     style="display:flex;align-items:center;gap:6px;
+            background:rgba(255,255,255,0.15);color:#fff;
+            text-decoration:none;font-size:0.8rem;
+            font-weight:600;padding:6px 12px;
+            border-radius:8px;border:1px solid rgba(255,255,255,0.3);
+            transition:all 0.15s;"
+     onmouseover="this.style.background='rgba(255,255,255,0.25)'"
+     onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+    <i class="bi bi-house"></i>
+    <span>View Site</span>
+  </a>
+
+  <!-- Avatar dropdown -->
+  <div style="position:relative;" id="userMenu">
+    <div onclick="toggleUserMenu()"
+         style="display:flex;align-items:center;gap:8px;
+                cursor:pointer;padding:4px 10px;
+                border-radius:8px;transition:all 0.15s;"
+         onmouseover="this.style.background='rgba(255,255,255,0.15)'"
+         onmouseout="this.style.background='transparent'">
+      <div class="avatar">{{ request.user.username|first|upper }}</div>
+      <span>{{ request.user.username }}</span>
+      
+    </div>
+
+    <!-- Dropdown menu -->
+    <div id="userDropdown"
+         style="display:none;position:absolute;right:0;top:calc(100% + 8px);
+                background:#fff;border-radius:10px;
+                box-shadow:0 4px 20px rgba(0,0,0,0.15);
+                border:1px solid #e0d5c8;min-width:160px;
+                overflow:hidden;z-index:500;">
+      <div style="padding:12px 16px;border-bottom:1px solid #f0e8df;">
+        <div style="font-size:0.78rem;color:#8b6f5a;">Signed in as</div>
+        <div style="font-size:0.88rem;font-weight:600;color:#3d1f0f;">
+          {{ request.user.username }}
+        </div>
+      </div>
+      <a href="{% url 'logout' %}"
+         onclick="return confirm('Are you sure you want to sign out?')"
+         style="display:flex;align-items:center;gap:10px;
+                padding:12px 16px;color:#be123c;
+                text-decoration:none;font-size:0.85rem;
+                font-weight:500;transition:background 0.15s;"
+         onmouseover="this.style.background='#fff1f2'"
+         onmouseout="this.style.background='transparent'">
+        <i class="bi bi-box-arrow-right"></i>
+        Sign Out
+      </a>
+    </div>
+  </div>
 </div>
 </div>
 
@@ -253,14 +290,27 @@
     <small>View · Overdue fines</small>
   </a>
 
-  <a href="{% url 'logout' %}" class="dash-card card-6"
-     onclick="return confirm('Are you sure you want to sign out?')">
-    <i class="bi bi-box-arrow-right"></i>
-    <span>Sign Out</span>
-    <small>Logout safely</small>
+  <a href="{% url 'book_history' %}" class="dash-card card-6">
+     <i class="bi bi-clock-history"></i>
+    <span>Book History</span>
+    <small>All transactions</small>
   </a>
 
 </div>
+ 
+<script>
+  function toggleUserMenu() {
+    const dropdown = document.getElementById('userDropdown');
+    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+  }
 
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    const menu = document.getElementById('userMenu');
+    if (!menu.contains(e.target)) {
+      document.getElementById('userDropdown').style.display = 'none';
+    }
+  });
+</script>
 </body>
 </html>

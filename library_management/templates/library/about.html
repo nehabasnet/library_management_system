@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Petemoss&family=Shadows+Into+Light&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap"
       rel="stylesheet"
     />
 
@@ -29,18 +29,22 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
       }
 
       .nav-left {
         display: flex;
         align-items: center;
         gap: 40px;
+        flex-wrap: wrap;
       }
 
       nav ul {
         list-style: none;
         display: flex;
         gap: 20px;
+        flex-wrap: wrap;
       }
 
       nav ul li a {
@@ -49,6 +53,8 @@
         font-weight: bold;
         transition: 0.3s;
         display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
       }
       nav ul li a:hover {
         transform: scale(1.1);
@@ -71,11 +77,33 @@
         color: black;
       }
 
+      /* Hero section */
+      .hero {
+        background: linear-gradient(135deg, #8a5f41, #6d4c41);
+        color: white;
+        text-align: center;
+        padding: 70px 20px 90px;
+      }
+
+      .hero h1 {
+        font-family: "Caveat", cursive;
+        font-size: 56px;
+        margin-bottom: 10px;
+      }
+
+      .hero p {
+        font-size: 18px;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
       .container {
         padding: 40px;
         max-width: 900px;
-        margin: auto;
+        margin: -50px auto 0;
       }
+
       .about-card {
         background-color: white;
         padding: 30px;
@@ -93,25 +121,25 @@
       .about-card h2 {
         margin-bottom: 15px;
         color: #6d4c41;
+        display: flex;
+        align-items: center;
+        gap: 10px;
       }
 
       .about-card ul {
-        padding-left: 20px;
+        list-style: none;
         margin-top: 10px;
       }
 
-      .page-title {
-        text-align: center;
-        font-size: 42px;
-        margin-bottom: 30px;
-        color: #6d4c41;
-        font-family: "Caveat", cursive;
+      .about-card ul li {
+        padding: 8px 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
       }
 
-      .developer {
-        text-align: center;
-        font-weight: bold;
-        color: #5d4037;
+      .about-card ul li::before {
+        content: "📖";
         font-size: 18px;
       }
 
@@ -119,25 +147,68 @@
         color: white;
       }
       #lib {
-        color: #6d4c41;
-      }
-
-      h2 {
-        color: #6d4c41;
-        margin-top: 30px;
+        color: #f3e4c9;
       }
 
       p,
       li {
-        font-size: 18px;
+        font-size: 17px;
         line-height: 1.6;
+        color: #444;
+      }
+
+      /* Developer card */
+      .dev-card {
+        text-align: center;
+      }
+
+      .dev-avatars {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 15px;
+        flex-wrap: wrap;
+      }
+
+      .dev-avatar {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .dev-avatar .circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: #8a5f41;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 20px;
+      }
+
+      .dev-avatar span {
+        font-weight: bold;
+        color: #5d4037;
+        font-size: 15px;
+      }
+
+      footer {
+        text-align: center;
+        padding: 25px;
+        color: #6d4c41;
+        font-size: 14px;
+        opacity: 0.8;
       }
     </style>
   </head>
   <body>
     <nav>
       <div class="nav-left">
-        <h1 id="our">LibraryMS</h1>
+        <h1><span id="our">Library</span><span id="lib">MS</span></h1>
 
         <ul>
           <li><a href="{% url 'home' %}">Home</a></li>
@@ -150,11 +221,17 @@
       <a href="{% url 'login' %}" class="login-btn">Login</a>
     </nav>
 
-    <div class="container">
-      <h1 class="page-title">About Our Library</h1>
+    <div class="hero">
+      <h1>About Our Library</h1>
+      <p>
+        A simple, modern space where readers can discover, borrow, and stay
+        connected with books they love.
+      </p>
+    </div>
 
+    <div class="container">
       <div class="about-card">
-        <h2>Welcome</h2>
+        <h2>👋 Welcome</h2>
         <p>
           Welcome to our Library Management System. Our library is a place for
           learning, reading, and exploring knowledge through books.
@@ -166,7 +243,7 @@
       </div>
 
       <div class="about-card">
-        <h2>What We Offer</h2>
+        <h2>✨ What We Offer</h2>
         <ul>
           <li>Wide collection of books from different categories</li>
           <li>Easy online browsing experience</li>
@@ -177,7 +254,7 @@
       </div>
 
       <div class="about-card">
-        <h2>Our Mission</h2>
+        <h2>🎯 Our Mission</h2>
         <p>
           Our mission is to encourage reading, support learning, and make books
           accessible to everyone through a simple and user-friendly digital
@@ -185,10 +262,21 @@
         </p>
       </div>
 
-      <div class="about-card">
-        <h2>Developer</h2>
-        <p class="developer">Developed by Aastha Paudel and Neha Basnet</p>
+      <div class="about-card dev-card">
+        <h2 style="justify-content: center">💻 Developers</h2>
+        <div class="dev-avatars">
+          <div class="dev-avatar">
+            <div class="circle">AP</div>
+            <span>Aastha Paudel</span>
+          </div>
+          <div class="dev-avatar">
+            <div class="circle">NB</div>
+            <span>Neha Basnet</span>
+          </div>
+        </div>
       </div>
     </div>
+
+    <footer>&copy; {% now "Y" %} LibraryMS. Built with Django.</footer>
   </body>
 </html>

@@ -61,3 +61,16 @@ class IssueBook(models.Model):
 
     def __str__(self):
         return f"{self.student} → {self.book}"
+
+class ContactMessage(models.Model):
+    name = models.CharField(max_length=200)
+    email = models.EmailField()
+    subject = models.CharField(max_length=255)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.subject} — {self.name}"
+
+    class Meta:
+        ordering = ['-created_at']

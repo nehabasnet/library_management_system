@@ -3,7 +3,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
-from .models import Book, Category, ContactInfo, Student, IssueBook
+from .models import Book, Category, ContactInfo, Student, IssueBook, ContactMessage
+from django.http import JsonResponse
 from django.core.paginator import Paginator 
 
 def home(request):
@@ -63,6 +64,20 @@ def books(request):
 
 def contact(request):
     contact = ContactInfo.objects.first()
+
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        subject = request.POST.get('subject', '').strip()
+        message = request.POST.get('message', '').strip()
+
+        if name and email and subject and message:
+            ContactMessage.objects.create(
+                name=name, email=email, subject=subject, message=message,
+            )
+            return JsonResponse({'status': 'ok'})
+        else:
+            return JsonResponse({'status': 'error', 'error': 'All fields are required.'}, status=400)
 
     return render(request, 'library/contact.html', {
         'contact': contact

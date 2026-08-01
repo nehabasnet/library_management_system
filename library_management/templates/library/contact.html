@@ -3,11 +3,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Contact Us</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Petemoss&family=Shadows+Into+Light&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap"
       rel="stylesheet"
     />
 
@@ -28,18 +29,22 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
       }
 
       .nav-left {
         display: flex;
         align-items: center;
         gap: 40px;
+        flex-wrap: wrap;
       }
 
       nav ul {
         list-style: none;
         display: flex;
         gap: 20px;
+        flex-wrap: wrap;
       }
 
       nav ul li a {
@@ -48,6 +53,8 @@
         font-weight: bold;
         transition: 0.3s;
         display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
       }
       nav ul li a:hover {
         transform: scale(1.1);
@@ -70,6 +77,25 @@
         color: black;
       }
 
+      .hero {
+        background: linear-gradient(135deg, #8a5f41, #6f4e37);
+        color: white;
+        text-align: center;
+        padding: 60px 20px 80px;
+      }
+
+      .hero h1 {
+        font-family: "Caveat", cursive;
+        font-size: 50px;
+        margin-bottom: 8px;
+      }
+
+      .hero p {
+        max-width: 550px;
+        margin: 0 auto;
+        opacity: 0.9;
+      }
+
       footer {
         margin-top: 50px;
         background-color: #a77f60;
@@ -80,30 +106,27 @@
 
       .container {
         max-width: 1100px;
-        margin: auto;
-        padding: 50px 20px;
+        margin: -50px auto 0;
+        padding: 0 20px 50px;
       }
 
       .contact-wrapper {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 40px;
+        gap: 30px;
       }
 
       .card {
         background: white;
         padding: 30px;
         border-radius: 14px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+        transition: 0.3s ease;
       }
 
-      #lib {
-        color: white;
-        margin-bottom: 10px;
-      }
-      #con {
-        color: #6f4e37;
-        margin-bottom: 10px;
+      .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
       }
 
       h2 {
@@ -111,27 +134,104 @@
         margin-bottom: 20px;
       }
 
+      .info-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+
+      .info-icon {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        border-radius: 50%;
+        background-color: #f3e4c9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+      }
+
+      .info-row strong {
+        display: block;
+        color: #6f4e37;
+        font-size: 14px;
+      }
+
+      .info-row span {
+        color: #444;
+      }
+
+      .field-group {
+        position: relative;
+        margin-bottom: 18px;
+      }
+
+      label {
+        display: block;
+        font-size: 13px;
+        font-weight: bold;
+        color: #6f4e37;
+        margin-bottom: 6px;
+      }
+
       input,
       textarea {
         width: 100%;
-        padding: 12px;
-        margin-bottom: 15px;
+        padding: 12px 14px;
         border: 1px solid #ddd;
         border-radius: 8px;
         font-size: 15px;
+        transition: 0.2s ease;
+        font-family: inherit;
+      }
+
+      input:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #8a5f41;
+        box-shadow: 0 0 0 3px rgba(138, 95, 65, 0.15);
       }
 
       button {
         background-color: #6f4e37;
         color: white;
         border: none;
-        padding: 12px 24px;
+        padding: 13px 28px;
         border-radius: 8px;
         cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+        width: 100%;
+        transition: 0.3s;
       }
 
       button:hover {
         background-color: #5a3e2b;
+        transform: translateY(-2px);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .success-banner {
+        display: none;
+        background-color: #e6f4ea;
+        color: #256029;
+        border: 1px solid #a3d9b1;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        font-size: 14px;
+        text-align: center;
       }
 
       @media (max-width: 768px) {
@@ -144,7 +244,7 @@
   <body>
     <nav>
       <div class="nav-left">
-        <h1 id="lib">LibraryMS</h1>
+        <h1>LibraryMS</h1>
 
         <ul>
           <li><a href="{% url 'home' %}">Home</a></li>
@@ -157,23 +257,55 @@
       <a href="{% url 'login' %}" class="login-btn">Login</a>
     </nav>
 
-    <div class="container">
-      <h1 id="con">Contact Us</h1>
+    <div class="hero">
+      <h1>Contact Us</h1>
       <p>
-        We’d love to hear from you. Reach out with questions, feedback, or book
+        We'd love to hear from you. Reach out with questions, feedback, or book
         requests.
       </p>
+    </div>
 
+    <div class="container">
       <div class="contact-wrapper">
         <div class="card">
           <h2>Library Information</h2>
 
           {% if contact %}
-          <p><strong>Library:</strong> {{ contact.library_name }}</p>
-          <p><strong>Address:</strong> {{ contact.address }}</p>
-          <p><strong>Phone:</strong> {{ contact.phone }}</p>
-          <p><strong>Email:</strong> {{ contact.email }}</p>
-          <p><strong>Opening Hours:</strong> {{ contact.opening_hours }}</p>
+          <div class="info-row">
+            <div class="info-icon">🏛️</div>
+            <div>
+              <strong>Library</strong>
+              <span>{{ contact.library_name }}</span>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">📍</div>
+            <div>
+              <strong>Address</strong>
+              <span>{{ contact.address }}</span>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">📞</div>
+            <div>
+              <strong>Phone</strong>
+              <span>{{ contact.phone }}</span>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✉️</div>
+            <div>
+              <strong>Email</strong>
+              <span>{{ contact.email }}</span>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">🕐</div>
+            <div>
+              <strong>Opening Hours</strong>
+              <span>{{ contact.opening_hours }}</span>
+            </div>
+          </div>
           {% else %}
           <p>No contact information added yet.</p>
           {% endif %}
@@ -182,21 +314,114 @@
         <div class="card">
           <h2>Send a Message</h2>
 
-          <form method="POST">
+          <div class="success-banner" id="successBanner">
+            ✅ Your message has been sent successfully!
+          </div>
+
+          <form method="POST" id="contactForm" action="{% url 'contact' %}">
             {% csrf_token %}
 
-            <input type="text" placeholder="Your Name" required />
+            <div class="field-group">
+              <label for="id_name">Your Name</label>
+              <input
+                type="text"
+                id="id_name"
+                name="name"
+                placeholder="Jane Doe"
+                required
+              />
+            </div>
 
-            <input type="email" placeholder="Your Email" required />
+            <div class="field-group">
+              <label for="id_email">Your Email</label>
+              <input
+                type="email"
+                id="id_email"
+                name="email"
+                placeholder="jane@example.com"
+                required
+              />
+            </div>
 
-            <input type="text" placeholder="Subject" required />
+            <div class="field-group">
+              <label for="id_subject">Subject</label>
+              <input
+                type="text"
+                id="id_subject"
+                name="subject"
+                placeholder="Book request, feedback, etc."
+                required
+              />
+            </div>
 
-            <textarea rows="6" placeholder="Your Message"></textarea>
+            <div class="field-group">
+              <label for="id_message">Your Message</label>
+              <textarea
+                id="id_message"
+                name="message"
+                rows="6"
+                placeholder="Write your message here..."
+                required
+              ></textarea>
+            </div>
 
-            <button type="submit">Send Message</button>
+            <button type="submit" id="submitBtn">Send Message</button>
           </form>
         </div>
       </div>
     </div>
+
+    <footer>&copy; {% now "Y" %} LibraryMS. Built with Django.</footer>
+
+    <script>
+      const form = document.getElementById("contactForm");
+      const banner = document.getElementById("successBanner");
+      const submitBtn = document.getElementById("submitBtn");
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Sending...";
+
+        fetch(form.action, {
+          method: "POST",
+          body: formData,
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+          },
+        })
+          .then(function (response) {
+            return response.json().then(function (data) {
+              return { ok: response.ok, data: data };
+            });
+          })
+          .then(function (result) {
+            if (result.ok) {
+              alert("Your information has been sent!");
+              banner.style.display = "block";
+              form.reset();
+              setTimeout(function () {
+                banner.style.display = "none";
+              }, 4000);
+            } else {
+              alert(
+                "Something went wrong: " +
+                  (result.data.error || "please try again."),
+              );
+            }
+          })
+          .catch(function () {
+            alert(
+              "Could not send your message. Please check your connection and try again.",
+            );
+          })
+          .finally(function () {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Send Message";
+          });
+      });
+    </script>
   </body>
 </html>

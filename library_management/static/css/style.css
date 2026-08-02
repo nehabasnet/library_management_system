@@ -72,14 +72,12 @@ nav ul li a {
 
 nav ul li a:hover {
   transform: scale(1.1);
-  background-color: black;
   color: white;
 }
 
 .login-btn {
   text-decoration: none;
   color: white;
-  background-color: black;
   padding: 10px 18px;
   border-radius: 5px;
   font-weight: bold;

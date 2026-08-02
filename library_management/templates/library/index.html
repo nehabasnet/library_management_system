@@ -40,8 +40,9 @@
         margin-bottom: 20px;
         font-family: "Shadows Into Light", cursive;
       }
-
-      .hero button {
+      .hero .get-started-btn {
+        display: inline-block;
+        text-decoration: none;
         padding: 12px 25px;
         border: none;
         background-color: #3498db;
@@ -51,8 +52,7 @@
         cursor: pointer;
         transition: 0.3s;
       }
-
-      .hero button:hover {
+      .hero .get-started-btn:hover{
         background-color: #2980b9;
       }
       .features {
@@ -100,7 +100,7 @@
     <section class="hero">
       <h2>Library Management System</h2>
 
-      <button>Get Started</button>
+    <a href="{% url 'books' %}" class="get-started-btn">Get Started</a>
     </section>
 
     <section class="features">

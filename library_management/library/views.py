@@ -61,7 +61,11 @@ def books(request):
         'categories':        categories,
         'selected_category': category_id,
     })
-
+def book_detail(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+    return render(request, 'library/book_detail.html', {
+        'book': book
+    })
 def contact(request):
     contact = ContactInfo.objects.first()
 

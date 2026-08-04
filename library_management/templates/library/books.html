@@ -248,6 +248,7 @@
           <class="books-section">
           <div class="books-grid">
             {% for book in books %}
+            <a href="{% url 'book_detail' book.pk %}" class="book-card-link">
             <div class="book-card">
               {% if book.get_cover %}
               <img
@@ -291,6 +292,7 @@
               <p class="not-available">Not Available</p>
               {% endif %}
             </div>
+            </a>
             {% empty %}
             <p>No books found.</p>
             {% endfor %}

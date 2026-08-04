@@ -18,7 +18,10 @@ class Book(models.Model):
     quantity = models.IntegerField(default=1)
     available = models.BooleanField(default=True)
     cover_image = models.ImageField(upload_to='book_covers/', blank=True, null=True)  # ← file upload
-    cover_url   = models.URLField(blank=True, default='') 
+    cover_url   = models.URLField(blank=True, default='')
+    book_file   = models.FileField(upload_to='book_files/', blank=True, null=True)
+    read_url    = models.URLField(blank=True, default='')
+ 
 
     def __str__(self):
         return self.title

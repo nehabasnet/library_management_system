@@ -88,3 +88,8 @@ nav ul li a:hover {
   background-color: white;
   color: black;
 }
+.book-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}

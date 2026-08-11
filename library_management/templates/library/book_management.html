@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -1143,8 +1144,7 @@
               >
                 ← Prev
               </a>
-              {% endif %} {% for num in books.paginator.page_range %} {% if
-              books.number == num %}
+              {% endif %} {% for num in books.paginator.page_range %} {% if books.number == num %}
               <span
                 style="
                   padding: 6px 14px;
@@ -1157,8 +1157,7 @@
               >
                 {{ num }}
               </span>
-              {% elif num > books.number|add:'-3' and num < books.number|add:'3'
-              %}
+              {% elif num > books.number|add:'-3' and num < books.number|add:'3' %}
               <a
                 href="?{% if query %}q={{ query }}&{% endif %}page={{ num }}"
                 style="

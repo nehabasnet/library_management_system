@@ -169,6 +169,26 @@
         color: #8a5f41;
         margin-bottom: 20px;
       }
+      .location-box {
+        margin-top: 16px;
+        background: #f5ede6;
+        border: 1px solid #e0d5c8;
+        border-radius: 10px;
+        padding: 14px 16px;
+        text-align: left;
+      }
+
+      .location-box strong {
+        display: block;
+        color: #6f4e37;
+        font-size: 13px;
+        margin-bottom: 4px;
+      }
+
+      .location-box span {
+        color: #333;
+        font-size: 15px;
+      }
 
       .meta-row {
         display: flex;
@@ -259,11 +279,11 @@
         <div class="action-buttons">
           {% if book.book_file %}
           <a href="{{ book.book_file.url }}" target="_blank" class="btn btn-read">
-            📖 Read Book
+              Read Online 
           </a>
           {% elif book.read_url %}
           <a href="{{ book.read_url }}" target="_blank" class="btn btn-read">
-            📖 Read Book
+              Read Online
           </a>
           {% else %}
           <span class="btn btn-disabled">No preview available</span>
@@ -271,6 +291,13 @@
 
           <a href="{% url 'books' %}" class="btn btn-back">Back to Books</a>
         </div>
+    
+      {% if book.shelf_location %}
+        <div class="location-box">
+          <strong>📍 Find it in the library</strong>
+          <span>{{ book.shelf_location }}</span>
+        </div>
+        {% endif %}
       </div>
 
       <!-- RIGHT: INFO -->

@@ -21,7 +21,7 @@ class Book(models.Model):
     cover_url   = models.URLField(blank=True, default='')
     book_file   = models.FileField(upload_to='book_files/', blank=True, null=True)
     read_url    = models.URLField(blank=True, default='')
- 
+    shelf_location = models.CharField(max_length=100, blank=True, default='')
 
     def __str__(self):
         return self.title

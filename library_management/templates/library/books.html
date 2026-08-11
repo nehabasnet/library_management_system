@@ -336,8 +336,7 @@
             >
               {{ num }}
             </span>
-            {% elif num > books.number|add:'-3' and num < books.number|add:'3'
-            %}
+            {% elif num > books.number|add:'-3' and num < books.number|add:'3' %}
             <a
               href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}page={{ num }}"
               style="

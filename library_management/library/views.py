@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
-from .models import Book, Category, ContactInfo, Student, IssueBook, ContactMessage
+from .models import Book, Category, ContactInfo, Student, IssueBook, ContactMessage, Reservation
 from django.http import JsonResponse
 from django.core.paginator import Paginator 
 
@@ -66,6 +66,46 @@ def book_detail(request, pk):
     return render(request, 'library/book_detail.html', {
         'book': book
     })
+
+def reserve_book(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+
+    if request.method == 'POST':
+        Reservation.objects.create(
+            book=book,
+            full_name=request.POST.get('full_name', '').strip(),
+            student_id=request.POST.get('student_id', '').strip(),
+            email=request.POST.get('email', '').strip(),
+        )
+        messages.success(request, f'Reservation submitted for "{book.title}". We will notify you when it is available.')
+        return redirect('book_detail', pk=book.pk)
+
+    return render(request, 'library/reserve_book.html', {'book': book})
+
+
+@login_required
+def reservation_management(request):
+    reservations = Reservation.objects.select_related('book').all()
+    return render(request, 'library/reservation_management.html', {'reservations': reservations})
+
+
+@login_required
+def reservation_fulfill(request, pk):
+    reservation = get_object_or_404(Reservation, pk=pk)
+    reservation.status = 'fulfilled'
+    reservation.save()
+    messages.success(request, f'Reservation for "{reservation.book.title}" marked as fulfilled.')
+    return redirect('reservation_management')
+
+
+@login_required
+def reservation_cancel(request, pk):
+    reservation = get_object_or_404(Reservation, pk=pk)
+    reservation.status = 'cancelled'
+    reservation.save()
+    messages.success(request, f'Reservation for "{reservation.book.title}" cancelled.')
+    return redirect('reservation_management')
+
 def contact(request):
     contact = ContactInfo.objects.first()
 

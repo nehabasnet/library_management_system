@@ -274,6 +274,8 @@
         <span class="status-badge status-available">Available</span>
         {% else %}
         <span class="status-badge status-unavailable">Not Available</span>
+        <a href="{% url 'reserve_book' book.pk %}" class="btn btn-read" style="margin-top: 10px; display: inline-block;">
+           Reserve this Book
         {% endif %}
 
         <div class="action-buttons">

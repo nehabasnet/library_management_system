@@ -63,24 +63,58 @@ def books(request):
     })
 def book_detail(request, pk):
     book = get_object_or_404(Book, pk=pk)
+
+    has_pending_reservation = Reservation.objects.filter(
+        book=book,
+        status='pending'
+    ).exists()
+
     return render(request, 'library/book_detail.html', {
-        'book': book
+        'book': book,
+        'has_pending_reservation': has_pending_reservation,
     })
 
 def reserve_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
 
     if request.method == 'POST':
+        full_name = request.POST.get('full_name', '').strip()
+        student_id = request.POST.get('student_id', '').strip()
+        email = request.POST.get('email', '').strip()
+
+        # Check if this person has already reserved this book
+        existing_reservation = Reservation.objects.filter(
+            book=book,
+            student_id=student_id,
+            status='pending'
+        ).exists()
+
+        if existing_reservation:
+            messages.warning(
+                request,
+                f'You have already reserved "{book.title}".'
+            )
+            return redirect('book_detail', pk=book.pk)
+
         Reservation.objects.create(
             book=book,
-            full_name=request.POST.get('full_name', '').strip(),
-            student_id=request.POST.get('student_id', '').strip(),
-            email=request.POST.get('email', '').strip(),
+            full_name=full_name,
+            student_id=student_id,
+            email=email,
         )
-        messages.success(request, f'Reservation submitted for "{book.title}". We will notify you when it is available.')
+
+        messages.success(
+            request,
+            f'Reservation submitted successfully for "{book.title}"!'
+        )
+
         return redirect('book_detail', pk=book.pk)
 
-    return render(request, 'library/reserve_book.html', {'book': book})
+    return render(
+        request,
+        'library/reserve_book.html',
+        {'book': book}
+    )
 
 
 @login_required

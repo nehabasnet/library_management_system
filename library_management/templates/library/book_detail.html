@@ -157,6 +157,36 @@
         padding: 35px;
         box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
       }
+      .messages {
+    max-width: 1100px;
+    margin: 20px auto 0;
+    padding: 0 40px;
+}
+
+.message {
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.message.success {
+    background-color: #e6f4ea;
+    color: #256029;
+    border: 1px solid #b7d9bd;
+}
+
+.message.warning {
+    background-color: #fff4d6;
+    color: #7a5a00;
+    border: 1px solid #e5cc88;
+}
+
+.message.error {
+    background-color: #fbe9e7;
+    color: #a83232;
+    border: 1px solid #e0b0aa;
+}
 
       .info-card h1 {
         font-size: 34px;
@@ -254,6 +284,15 @@
 
       <a href="{% url 'login' %}" class="login-btn">Login</a>
     </nav>
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+           <div class="message {{ message.tags }}">
+               {{ message }}
+          </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
     <div class="breadcrumb">
       <a href="{% url 'books' %}">&larr; Back to all books</a>
@@ -271,13 +310,41 @@
         {% endif %}
 
         {% if book.available %}
-        <span class="status-badge status-available">Available</span>
-        {% else %}
-        <span class="status-badge status-unavailable">Not Available</span>
-        <a href="{% url 'reserve_book' book.pk %}" class="btn btn-read" style="margin-top: 10px; display: inline-block;">
-           Reserve this Book
+
+    <span class="status-badge status-available">
+        Available
+    </span>
+
+{% else %}
+
+    <span class="status-badge status-unavailable">
+        Not Available
+    </span>
+
+    {% if has_pending_reservation %}
+
+        <span
+            class="btn btn-disabled"
+            style="margin-top: 10px;"
+        >
+            <i class="bi bi-check-circle"></i>
+            Reserved
+        </span>
+
+    {% else %}
+
+        <a
+            href="{% url 'reserve_book' book.pk %}"
+            class="btn btn-read"
+            style="margin-top: 10px;"
+        >
+            <i class="bi bi-bookmark-plus"></i>
+            Reserve this Book
         </a>
-        {% endif %}
+
+    {% endif %}
+
+{% endif %}
 
         <div class="action-buttons">
           {% if book.book_file %}

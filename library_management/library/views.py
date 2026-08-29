@@ -125,10 +125,54 @@ def reservation_management(request):
 
 @login_required
 def reservation_fulfill(request, pk):
+    from datetime import date, timedelta
+
     reservation = get_object_or_404(Reservation, pk=pk)
+    book = reservation.book
+
+    if book.quantity < 1:
+        messages.error(
+            request,
+            f'Cannot fulfill — "{book.title}" has no copies available right now.'
+        )
+        return redirect('reservation_management')
+
+    # Find or create the student behind this reservation
+    student, _ = Student.objects.get_or_create(
+        student_id=reservation.student_id,
+        defaults={
+            'full_name': reservation.full_name,
+            'email': reservation.email,
+            'phone': '',
+        }
+    )
+
+    # Avoid double-issuing if they already have this book
+    already_issued = IssueBook.objects.filter(
+        student=student, book=book, return_date__isnull=True
+    ).exists()
+
+    if already_issued:
+        messages.warning(
+            request,
+            f'{student.full_name} already has "{book.title}" issued.'
+        )
+    else:
+        due = date.today() + timedelta(days=14)
+        IssueBook.objects.create(student=student, book=book, due_date=due)
+
+        book.quantity -= 1
+        if book.quantity == 0:
+            book.available = False
+        book.save()
+
+        messages.success(
+            request,
+            f'"{book.title}" issued to {student.full_name}. Due: {due.strftime("%B %d, %Y")}'
+        )
+
     reservation.status = 'fulfilled'
     reservation.save()
-    messages.success(request, f'Reservation for "{reservation.book.title}" marked as fulfilled.')
     return redirect('reservation_management')
 
 

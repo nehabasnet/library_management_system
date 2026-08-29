@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reservations — LMS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #e8ddd0; font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
+
+    .admin-layout { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 240px;
+      background: #6b3a1f;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0;
+      height: 100vh;
+      z-index: 200;
+      transition: width 0.2s ease, transform 0.2s ease;
+      overflow: hidden;
+    }
+    .sidebar.collapsed { width: 64px; }
+
+    .sidebar-brand {
+       height: 55px;
+       display: flex;
+       align-items: center;
+       justify-content: space-between;
+       padding: 0 16px;
+       border-bottom: 1px solid #3b2a1f;
+       flex-shrink: 0;
+    }
+    .brand-left { display: flex; align-items: center; gap: 10px; overflow: hidden; }
+    .brand-left i    { color: white; font-size: 1.3rem; flex-shrink: 0; }
+    .brand-left span {
+       color: #fff; font-size: 0.95rem; font-weight: 700;
+       white-space: nowrap; opacity: 1; transition: opacity 0.15s;
+    }
+    .sidebar.collapsed .brand-left span { opacity: 0; }
+
+    .toggle-btn {
+       background: none; border: none;
+       color: white; cursor: pointer;
+       font-size: 1.2rem; padding: 6px;
+       border-radius: 6px; flex-shrink: 0;
+       transition: background 0.15s;
+    }
+    .toggle-btn:hover { background: #3d1f0f; color: #fff; }
+    .nav-section-label {
+       font-size: 0.68rem; font-weight: 600;
+       letter-spacing: 1px; text-transform: uppercase;
+       color: white; padding: 14px 20px 4px;
+       white-space: nowrap; opacity: 1;
+       transition: opacity 0.15s;
+    }
+    .sidebar.collapsed .nav-section-label { opacity: 0; }
+
+    .sidebar-nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 8px 0; }
+
+    .sidebar-link {
+       display: flex; align-items: center; gap: 12px;
+       padding: 10px 20px; color: #f8f8f7; text-decoration: none;
+       font-size: 0.875rem; border-left: 3px solid transparent;
+       white-space: nowrap; transition: all 0.15s;
+    }
+    .sidebar-link i      { font-size: 1.1rem; flex-shrink: 0; min-width:20px; display:inline-flex !important; visibility:visible !important; }
+    .sidebar-link span   { opacity: 1; transition: opacity 0.15s; }
+    .sidebar-link:hover  { background: rgba(0,0,0,0.2); color: #fff; }
+    .sidebar-link.active { background:rgba(0,0,0,0.25); color: #fff; border-left-color: #f0c98a; }
+
+    .sidebar.collapsed .sidebar-link { padding: 10px 0; justify-content: center; }
+    .sidebar-link { position: relative; }
+    .sidebar-link .nav-tooltip {
+       display: none; position: absolute; left: 68px; top: 50%;
+       transform: translateY(-50%); background: #3d1f0f;
+       color: #fff; font-size: 0.78rem; padding: 5px 10px; border-radius: 6px;
+       white-space: nowrap; z-index: 300; pointer-events: none;
+    }
+    .sidebar.collapsed .sidebar-link:hover .nav-tooltip { display: block; }
+    .sidebar.collapsed .sidebar-link span:not(.nav-tooltip) { opacity: 0; width: 0; overflow: hidden; }
+
+    .sidebar-footer {
+       padding: 14px 16px; border-top: 1px solid #3b2a1f;
+       display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+    }
+    .user-avatar {
+       width: 32px; height: 32px; background: rgba(0,0,0,0.2); border-radius: 50%;
+       display: flex; align-items: center; justify-content: center;
+       color: #fff; font-size: 0.82rem; font-weight: 700; flex-shrink: 0;
+    }
+    .user-info      { flex: 1; overflow: hidden; opacity: 1; transition: opacity 0.15s; }
+    .user-info span { color: white; font-size: 0.82rem; white-space: nowrap; display: block; }
+    .sidebar.collapsed .user-info { opacity: 0; }
+    .logout-btn {
+       color: white; text-decoration: none; font-size: 1.1rem; padding: 4px;
+       border-radius: 6px; transition: all 0.15s; flex-shrink: 0;
+    }
+    .logout-btn:hover { color: #ef4444; background: rgba(0,0,0,0.2); }
+
+    .main-content {
+       margin-left: 240px; flex: 1; min-width: 0;
+       display: flex; flex-direction: column; min-height: 100vh;
+       transition: margin-left 0.2s ease; overflow-x: hidden;
+    }
+    .main-content.expanded { margin-left: 64px; }
+
+    .mini-topbar {
+       height: 56px; background: #fff; border-bottom: 2px solid #e8ddd0;
+       display: flex; align-items: center; justify-content: space-between;
+       padding: 0 24px; position: sticky; top: 0; z-index: 100;
+       box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .mini-topbar h4 { font-size: 1.1rem; font-weight: 700; color: #3d1f0f; margin: 0; }
+    .mini-topbar-right { display: flex; align-items: center; gap: 8px; }
+    .mini-topbar-right .avatar {
+       width: 34px; height: 34px; background: #6b3a1f; border-radius: 50%;
+       display: flex; align-items: center; justify-content: center;
+       color: #fff; font-size: 0.78rem; font-weight: 700;
+    }
+    .mini-topbar-right span { font-size: 0.82rem; color: #8b6f5a; }
+
+    .page-body { max-width: 1100px; margin: 28px auto; padding: 0 20px; width: 100%; }
+    .page-heading { margin-bottom: 20px; }
+    .page-heading h2 { font-size: 1.4rem; font-weight: 700; color: #3d1f0f; margin-bottom: 4px; }
+    .page-heading p  { font-size: 0.85rem; color: #8b6f5a; }
+
+    .table-card {
+      background: #fff; border-radius: 16px;
+      overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .table-header { padding: 16px 24px; border-bottom: 1px solid #f0e8df; }
+    .table-header h5 { font-size: 1rem; font-weight: 700; color: #3d1f0f; margin: 0; }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      background: #faf3ec; font-size: 0.72rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.5px; color: #5c3d2e;
+      padding: 12px 16px; border-bottom: 1px solid #f0e8df; text-align: left;
+    }
+    tbody td {
+      padding: 12px 16px; font-size: 0.85rem;
+      color: #3d1f0f; border-bottom: 1px solid #faf3ec; vertical-align: middle;
+    }
+    tbody tr:hover { background: #fdf8f3; }
+    tbody tr:last-child td { border-bottom: none; }
+
+    .badge-pending   { background: #fff7e6; color: #92620a; font-size: 0.72rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+    .badge-fulfilled { background: #f0fdf4; color: #166534; font-size: 0.72rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+    .badge-cancelled { background: #fff1f2; color: #be123c; font-size: 0.72rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+
+    .avatar {
+      width: 30px; height: 30px; background: #8b5e3c;
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; color: #fff; font-size: 0.78rem; font-weight: 700;
+    }
+    .name-cell { display: flex; align-items: center; gap: 8px; }
+    .empty-state { text-align: center; padding: 48px 20px; color: #8b6f5a; }
+    .empty-state i { font-size: 2.5rem; opacity: 0.4; display: block; margin-bottom: 10px; }
+
+    .btn-fulfill, .btn-cancel {
+      border: none; padding: 5px 12px; border-radius: 6px;
+      font-size: 0.76rem; font-weight: 600;
+      text-decoration: none; transition: background 0.15s; display: inline-block;
+    }
+    .btn-fulfill { background: #166534; color: #fff; }
+    .btn-fulfill:hover { background: #14532d; color: #fff; }
+    .btn-cancel { background: #be123c; color: #fff; margin-left: 6px; }
+    .btn-cancel:hover { background: #9f1239; color: #fff; }
+
+    @media (max-width: 768px) {
+      .sidebar { width: 64px; }
+      .sidebar .brand-left span { opacity: 0; width: 0; overflow: hidden; }
+      .sidebar .nav-section-label { opacity: 0; }
+      .sidebar .sidebar-link { padding: 10px 0; justify-content: center; }
+      .sidebar .sidebar-link span:not(.nav-tooltip) { opacity: 0; width: 0; overflow: hidden; }
+      .sidebar .user-info { opacity: 0; width: 0; overflow: hidden; }
+      .main-content { margin-left: 64px; }
+      .hamburger-btn { display: none !important; }
+      table { display: block; overflow-x: auto; white-space: nowrap; }
+      .page-body { padding: 0 12px; margin: 16px auto; }
+      .table-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    }
+    @media (max-width: 480px) {
+      .sidebar { width: 240px !important; transform: translateX(-100%); }
+      .sidebar.mobile-open { transform: translateX(0) !important; }
+      .sidebar.collapsed { width: 240px !important; }
+      .main-content, .main-content.expanded { margin-left: 0 !important; }
+      .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 199; }
+      .sidebar-overlay.active { display: block; }
+      .hamburger-btn { display: flex !important; }
+      .page-body { max-width: 100% !important; margin: 16px 0 !important; padding: 0 12px !important; overflow-x: hidden; }
+      .mini-topbar { padding: 0 12px; }
+      .mini-topbar h4 { font-size: 0.9rem; }
+      .mini-topbar-right span { display: none; }
+      .mini-topbar-right a span { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="admin-layout">
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobile()"></div>
+  <aside class="sidebar" id="sidebar">
+
+    <div class="sidebar-brand">
+      <div class="brand-left">
+        <i class="bi bi-book-half"></i>
+        <span>LibraryMS</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+        <i class="bi bi-layout-sidebar-reverse" id="toggle-icon"></i>
+      </button>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a href="{% url 'dashboard' %}" class="sidebar-link" id="link-dashboard">
+        <i class="bi bi-grid-1x2"></i>
+        <span>Dashboard</span>
+        <span class="nav-tooltip">Dashboard</span>
+      </a>
+
+      <div class="nav-section-label">Books</div>
+      <a href="{% url 'book_management' %}" class="sidebar-link" id="link-books">
+        <i class="bi bi-journals"></i>
+        <span>Book Management</span>
+        <span class="nav-tooltip">Book Management</span>
+      </a>
+      <a href="{% url 'reservation_management' %}" class="sidebar-link" id="link-reservations">
+        <i class="bi bi-bookmark-check"></i>
+        <span>Reservations</span>
+        <span class="nav-tooltip">Reservations</span>
+      </a>
+
+      <div class="nav-section-label">People</div>
+      <a href="{% url 'member_management' %}" class="sidebar-link" id="link-members">
+        <i class="bi bi-people"></i>
+        <span>Members</span>
+        <span class="nav-tooltip">Members</span>
+      </a>
+
+      <div class="nav-section-label">Transactions</div>
+      <a href="{% url 'issue_book' %}" class="sidebar-link" id="link-issue">
+        <i class="bi bi-arrow-up-right-circle"></i>
+        <span>Issue Book</span>
+        <span class="nav-tooltip">Issue Book</span>
+      </a>
+      <a href="{% url 'issued_list' %}" class="sidebar-link" id="link-issued">
+        <i class="bi bi-clock-history"></i>
+        <span>Issued Books</span>
+        <span class="nav-tooltip">Issued Books</span>
+      </a>
+      <a href="{% url 'fine_management' %}" class="sidebar-link" id="link-fines">
+        <i class="bi bi-cash-coin"></i>
+        <span>Fine Management</span>
+        <span class="nav-tooltip">Fine Management</span>
+      </a>
+      <a href="{% url 'book_history' %}" class="sidebar-link" id="link-history">
+        <i class="bi bi-archive"></i>
+        <span>Book History</span>
+        <span class="nav-tooltip">Book History</span>
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-avatar">{{ request.user.username|first|upper }}</div>
+      <div class="user-info"><span>{{ request.user.username }}</span></div>
+      <a href="{% url 'logout' %}" class="logout-btn" title="Sign out" onclick="return confirm('Sign out?')">
+        <i class="bi bi-box-arrow-right"></i>
+      </a>
+    </div>
+
+  </aside>
+  <script>document.getElementById('link-reservations').classList.add('active');</script>
+
+  <div class="main-content" id="mainContent">
+    <div class="mini-topbar">
+      <button class="hamburger-btn" onclick="toggleMobile()" aria-label="Open menu"
+              style="display:none;background:none;border:none;color:#3d1f0f;font-size:1.4rem;
+                     cursor:pointer;padding:4px 8px;margin-right:8px;align-items:center;border-radius:6px;">
+        <i class="bi bi-list" id="hamburger-icon"></i>
+      </button>
+      <h4>Book Reservations</h4>
+      <div class="mini-topbar-right">
+        <a href="{% url 'home' %}"
+           style="display:flex;align-items:center;gap:6px;background:#f5ede6;color:#6b3a1f;
+                  text-decoration:none;font-size:0.8rem;font-weight:600;padding:6px 12px;
+                  border-radius:8px;border:1px solid #e0d5c8;transition:all 0.15s;margin-right:8px;"
+           onmouseover="this.style.background='#6b3a1f';this.style.color='#fff'"
+           onmouseout="this.style.background='#f5ede6';this.style.color='#6b3a1f'">
+          <i class="bi bi-house"></i>
+          <span>View Site</span>
+        </a>
+        <div class="avatar">{{ request.user.username|first|upper }}</div>
+        <span>{{ request.user.username }}</span>
+      </div>
+    </div>
+
+    <div class="page-body">
+      <div class="page-heading">
+        <h2>Book Reservations</h2>
+        <p>Everyone who has reserved a book from the site, and its current status.</p>
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div style="padding:10px 16px;border-radius:8px;margin-bottom:16px;
+                      background:#f0fdf4;color:#166534;font-size:0.85rem;font-weight:600;">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="table-card">
+        <div class="table-header">
+          <h5>
+            All Reservations
+            <span style="font-size:0.8rem;color:#8b6f5a;font-weight:400;margin-left:8px;">
+              ({{ reservations|length }} total)
+            </span>
+          </h5>
+        </div>
+
+        {% if reservations %}
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Reserved By</th>
+              <th>Book</th>
+              <th>Email</th>
+              <th>Reserved On</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in reservations %}
+            <tr>
+              <td style="color:#8b6f5a;">{{ forloop.counter }}</td>
+              <td>
+                <div class="name-cell">
+                  <div class="avatar">{{ r.full_name|first|upper }}</div>
+                  <div>
+                    <div style="font-weight:600;">{{ r.full_name }}</div>
+                    <div style="font-size:0.75rem;color:#8b6f5a;">{{ r.student_id }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <strong>{{ r.book.title }}</strong><br/>
+                <span style="font-size:0.75rem;color:#8b6f5a;">{{ r.book.author }}</span>
+              </td>
+              <td>{{ r.email }}</td>
+              <td>{{ r.reserved_at|date:"M d, Y H:i" }}</td>
+              <td>
+                {% if r.status == 'pending' %}
+                  <span class="badge-pending"><i class="bi bi-hourglass-split me-1"></i>Pending</span>
+                {% elif r.status == 'fulfilled' %}
+                  <span class="badge-fulfilled"><i class="bi bi-check-circle me-1"></i>Fulfilled</span>
+                {% else %}
+                  <span class="badge-cancelled"><i class="bi bi-x-circle me-1"></i>Cancelled</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if r.status == 'pending' %}
+                <form action="{% url 'reservation_fulfill' r.pk %}" method="post" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn-fulfill">Fulfill</button>
+                </form>
+                <form action="{% url 'reservation_cancel' r.pk %}" method="post" style="display:inline;"
+                      onsubmit="return confirm('Cancel this reservation?');">
+                  {% csrf_token %}
+                  <button type="submit" class="btn-cancel">Cancel</button>
+                </form>
+                {% else %}
+                  <span style="color:#8b6f5a;font-size:0.78rem;">—</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+          <i class="bi bi-bookmark"></i>
+          <p style="font-weight:600;margin-bottom:4px;">No reservations yet</p>
+          <p style="font-size:0.82rem;">Reservations made from the book pages will appear here.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const main    = document.getElementById('mainContent');
+    const icon    = document.getElementById('toggle-icon');
+    sidebar.classList.toggle('collapsed');
+    main.classList.toggle('expanded');
+    icon.className = sidebar.classList.contains('collapsed')
+      ? 'bi bi-layout-sidebar'
+      : 'bi bi-layout-sidebar-reverse';
+    localStorage.setItem('sidebar', sidebar.classList.contains('collapsed') ? 'collapsed' : 'open');
+  }
+
+  function toggleMobile() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const hIcon   = document.getElementById('hamburger-icon');
+    sidebar.classList.toggle('mobile-open');
+    overlay.classList.toggle('active');
+    hIcon.className = sidebar.classList.contains('mobile-open') ? 'bi bi-x-lg' : 'bi bi-list';
+  }
+
+  function initSidebar() {
+    const isMobile = window.innerWidth <= 480;
+    const isTablet = window.innerWidth <= 768;
+    if (isMobile || isTablet) {
+      document.querySelector('.hamburger-btn').style.display = 'flex';
+      return;
+    }
+    if (localStorage.getItem('sidebar') === 'collapsed') {
+      document.getElementById('sidebar').classList.add('collapsed');
+      document.getElementById('mainContent').classList.add('expanded');
+      document.getElementById('toggle-icon').className = 'bi bi-layout-sidebar';
+    }
+  }
+
+  window.addEventListener('resize', function() {
+    const isMobile = window.innerWidth <= 480;
+    const hamburger = document.querySelector('.hamburger-btn');
+    const overlay   = document.getElementById('sidebarOverlay');
+    const sidebar   = document.getElementById('sidebar');
+    if (isMobile) {
+      hamburger.style.display = 'flex';
+      sidebar.classList.remove('mobile-open');
+      overlay.classList.remove('active');
+    } else {
+      hamburger.style.display = 'none';
+      sidebar.classList.remove('mobile-open');
+      overlay.classList.remove('active');
+    }
+  });
+
+  initSidebar();
+</script>
+
+</body>
+</html>

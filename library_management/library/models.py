@@ -80,6 +80,7 @@ class ContactMessage(models.Model):
 class Reservation(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
+        ('notified', 'Notified'),
         ('fulfilled', 'Fulfilled'),
         ('cancelled', 'Cancelled'),
     ]
@@ -90,6 +91,7 @@ class Reservation(models.Model):
     email       = models.EmailField()
     reserved_at = models.DateTimeField(auto_now_add=True)
     status      = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    notified_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.full_name} → {self.book.title} ({self.status})"

@@ -6,6 +6,8 @@ from django.db.models import Q
 from .models import Book, Category, ContactInfo, Student, IssueBook, ContactMessage, Reservation
 from django.http import JsonResponse
 from django.core.paginator import Paginator 
+from django.core.mail import send_mail
+from django.utils import timezone
 
 def home(request):
     return render(request, 'library/index.html')
@@ -174,7 +176,54 @@ def reservation_fulfill(request, pk):
     reservation.status = 'fulfilled'
     reservation.save()
     return redirect('reservation_management')
+@login_required
+def notify_reservation(request, pk):
+    reservation = get_object_or_404(Reservation, pk=pk)
 
+    if request.method == 'POST':
+
+        if reservation.book.quantity < 1:
+            messages.error(
+                request,
+                f'"{reservation.book.title}" is not available yet.'
+            )
+            return redirect('reservation_management')
+
+        try:
+            send_mail(
+                subject=f'Your reserved book is now available - {reservation.book.title}',
+
+                message=f"""
+Hello {reservation.full_name},
+
+Good news! The book you reserved is now available.
+
+Book: {reservation.book.title}
+
+Please visit the library to collect your book.
+
+Thank you,
+Library Management System
+""",
+
+                from_email='yourlibrary@example.com',
+                recipient_list=[reservation.email],
+                fail_silently=False,
+            )
+
+            reservation.status = 'notified'
+            reservation.notified_at = timezone.now()
+            reservation.save()
+
+            messages.success(
+                request,
+                f'Notification sent to {reservation.full_name}.'
+            )
+
+        except Exception as e:
+            messages.error(request, f'Email could not be sent: {str(e)}')
+
+    return redirect('reservation_management')
 
 @login_required
 def reservation_cancel(request, pk):

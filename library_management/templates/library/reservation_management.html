@@ -171,6 +171,21 @@
     .btn-fulfill:hover { background: #14532d; color: #fff; }
     .btn-cancel { background: #be123c; color: #fff; margin-left: 6px; }
     .btn-cancel:hover { background: #9f1239; color: #fff; }
+    .btn-notify {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    margin-right: 6px;
+    cursor: pointer;
+}
+
+.btn-notify:hover {
+    background: #1d4ed8;
+}
 
     @media (max-width: 768px) {
       .sidebar { width: 64px; }
@@ -369,6 +384,13 @@
               </td>
               <td>
                 {% if r.status == 'pending' %}
+                <form action="{% url 'notify_reservation' r.pk %}" method="post" style="display:inline;">
+                  {% csrf_token %}
+
+                  <button type="submit" class="btn-notify">
+                  <i class="bi bi-envelope"></i> Notify
+                  </button>
+                </form>
                 <form action="{% url 'reservation_fulfill' r.pk %}" method="post" style="display:inline;">
                   {% csrf_token %}
                   <button type="submit" class="btn-fulfill">Fulfill</button>

@@ -10,7 +10,7 @@ class DashboardAccessTest(TestCase):
 
     def test_dashboard_redirects_when_not_logged_in(self):
         response = self.client.get(reverse('dashboard'))
-        self.assertNotEqual(response.status_code, 200)  # should redirect to login
+        self.assertNotEqual(response.status_code, 200)  
 
     def test_dashboard_loads_when_logged_in(self):
         self.client.login(username='staff', password='testpass123')

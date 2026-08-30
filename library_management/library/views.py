@@ -38,7 +38,6 @@ def _issue_book_to_student(student, book):
 def home(request):
     return render(request, 'library/index.html')
 
-# User Authentication Views
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
@@ -64,7 +63,7 @@ def logout_view(request):
     return redirect('login')
 
 
-# Book Views
+
 def books(request):
     query       = request.GET.get('q')
     category_id = request.GET.get('category')
@@ -110,7 +109,6 @@ def reserve_book(request, pk):
         student_id = request.POST.get('student_id', '').strip()
         email = request.POST.get('email', '').strip()
 
-        # Check if this person has already reserved this book
         existing_reservation = Reservation.objects.filter(
             book=book,
             student_id=student_id,
@@ -163,7 +161,6 @@ def reservation_fulfill(request, pk):
         )
         return redirect('reservation_management')
 
-    # Find or create the student behind this reservation
     student, _ = Student.objects.get_or_create(
         student_id=reservation.student_id,
         defaults={
@@ -194,7 +191,6 @@ def notify_reservation(request, pk):
 
     if request.method == 'POST':
 
-        # Check whether the book is available
         if reservation.book.quantity < 1:
             messages.error(
                 request,
@@ -225,7 +221,6 @@ Library Management System
                 fail_silently=False,
             )
 
-            # Change only the status
             reservation.status = 'notified'
             reservation.save()
 
@@ -272,7 +267,7 @@ def contact(request):
     })
 def about(request):
     return render(request, 'library/about.html')
-# admin dashboard
+
 @login_required
 def dashboard(request):
     return render(request, 'library/dashboard.html')
@@ -307,7 +302,7 @@ def book_add(request):
         cover_url   = request.POST.get('cover_url', '').strip()
         cat_id      = request.POST.get('category')
         new_cat     = request.POST.get('new_category', '').strip()
-        cover_image = request.FILES.get('cover_image')   # ← file upload
+        cover_image = request.FILES.get('cover_image')   
 
         if new_cat:
             category, _ = Category.objects.get_or_create(name=new_cat)
@@ -325,8 +320,8 @@ def book_add(request):
             title=title, author=author, isbn=isbn,
             quantity=quantity, description=desc,
             category=category, available=True,
-            cover_image=cover_image,             # ← new
-            cover_url=cover_url                  # ← new
+            cover_image=cover_image,             
+            cover_url=cover_url                  
         )
         messages.success(request, f'"{title}" added successfully!')
     return redirect('book_management')
@@ -346,7 +341,7 @@ def book_edit(request, pk):
         cat_id = request.POST.get('category')
         if cat_id:
             book.category = get_object_or_404(Category, id=cat_id)
-        # Only update image if a new one was uploaded
+
         if request.FILES.get('cover_image'):
             book.cover_image = request.FILES.get('cover_image')
         book.save()
@@ -366,7 +361,6 @@ def book_delete(request, pk):
         messages.success(request, f'"{title}" deleted.')
     return redirect('book_management')
 
-#Member management
 
 @login_required
 def member_management(request):
@@ -433,7 +427,6 @@ def member_delete(request, pk):
         messages.success(request, f'"{name}" removed.')
     return redirect('member_management')
 
-#Issue and Return Books
 
 @login_required
 def issue_book(request):
@@ -446,7 +439,6 @@ def issue_book(request):
         student    = get_object_or_404(Student, pk=student_id)
         book       = get_object_or_404(Book, pk=book_id)
 
-        # Check stock
         if book.quantity < 1:
             messages.error(request, f'"{book.title}" is out of stock.')
             return redirect('issue_book')
@@ -488,14 +480,12 @@ def issued_list(request):
         'today':   today,
     })
 
-#Return Book
 
 @login_required
 def return_book(request, pk):
     record = get_object_or_404(IssueBook, pk=pk)
     today  = date.today()
 
-    # Calculate fine preview (NPR 5 per day)
     overdue_days = max(0, (today - record.due_date).days)
     fine_preview = overdue_days * 5
 
@@ -504,7 +494,6 @@ def return_book(request, pk):
         record.fine        = fine_preview
         record.save()
 
-        # Restore book stock
         record.book.quantity += 1
         record.book.available = True
         record.book.save()
@@ -529,9 +518,7 @@ def return_book(request, pk):
         'fine_preview': fine_preview,
     })
 
-#Fine Management
 
-# ── Fine Management (Day 7) ───────────────────────────────────────
 
 @login_required
 def fine_management(request):
@@ -575,7 +562,6 @@ def fine_management(request):
         'today':           today,
     })
 
-# Book history
 
 @login_required
 def book_history(request):
@@ -587,15 +573,12 @@ def book_history(request):
         'student', 'book'
     ).all().order_by('-issue_date')
 
-    # Search
     if query:
         records = records.filter(
             Q(student__full_name__icontains=query) |
             Q(student__student_id__icontains=query) |
             Q(book__title__icontains=query)
         )
-
-    # Filter
     if filter_by == 'returned':
         records = records.filter(return_date__isnull=False)
     elif filter_by == 'issued':

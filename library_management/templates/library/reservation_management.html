@@ -150,6 +150,7 @@
     tbody tr:last-child td { border-bottom: none; }
 
     .badge-pending   { background: #fff7e6; color: #92620a; font-size: 0.72rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+    .badge-notified  { background: #eff6ff; color: #1d4ed8; font-size: 0.72rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
     .badge-fulfilled { background: #f0fdf4; color: #166534; font-size: 0.72rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
     .badge-cancelled { background: #fff1f2; color: #be123c; font-size: 0.72rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
 
@@ -376,6 +377,8 @@
               <td>
                 {% if r.status == 'pending' %}
                   <span class="badge-pending"><i class="bi bi-hourglass-split me-1"></i>Pending</span>
+                {% elif r.status == 'notified' %}
+                  <span class="badge-notified"><i class="bi bi-envelope-check me-1"></i>Notified</span>
                 {% elif r.status == 'fulfilled' %}
                   <span class="badge-fulfilled"><i class="bi bi-check-circle me-1"></i>Fulfilled</span>
                 {% else %}
@@ -383,14 +386,15 @@
                 {% endif %}
               </td>
               <td>
+                {% if r.status == 'pending' or r.status == 'notified' %}
                 {% if r.status == 'pending' %}
                 <form action="{% url 'notify_reservation' r.pk %}" method="post" style="display:inline;">
                   {% csrf_token %}
-
                   <button type="submit" class="btn-notify">
                   <i class="bi bi-envelope"></i> Notify
                   </button>
                 </form>
+                {% endif %}
                 <form action="{% url 'reservation_fulfill' r.pk %}" method="post" style="display:inline;">
                   {% csrf_token %}
                   <button type="submit" class="btn-fulfill">Fulfill</button>

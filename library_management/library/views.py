@@ -7,7 +7,33 @@ from .models import Book, Category, ContactInfo, Student, IssueBook, ContactMess
 from django.http import JsonResponse
 from django.core.paginator import Paginator 
 from django.core.mail import send_mail
-from django.utils import timezone
+from datetime import date, timedelta
+
+
+def _issue_book_to_student(student, book):
+    """
+    Create an IssueBook record for this student/book pair and decrement
+    the book's available quantity. Shared by reservation_fulfill and
+    issue_book so the issuing logic only lives in one place.
+
+    Returns the due_date if the book was issued, or None if the student
+    already has this book issued (and nothing was changed).
+    """
+    already_issued = IssueBook.objects.filter(
+        student=student, book=book, return_date__isnull=True
+    ).exists()
+    if already_issued:
+        return None
+
+    due = date.today() + timedelta(days=14)
+    IssueBook.objects.create(student=student, book=book, due_date=due)
+
+    book.quantity -= 1
+    if book.quantity == 0:
+        book.available = False
+    book.save()
+
+    return due
 
 def home(request):
     return render(request, 'library/index.html')
@@ -127,8 +153,6 @@ def reservation_management(request):
 
 @login_required
 def reservation_fulfill(request, pk):
-    from datetime import date, timedelta
-
     reservation = get_object_or_404(Reservation, pk=pk)
     book = reservation.book
 
@@ -149,25 +173,13 @@ def reservation_fulfill(request, pk):
         }
     )
 
-    # Avoid double-issuing if they already have this book
-    already_issued = IssueBook.objects.filter(
-        student=student, book=book, return_date__isnull=True
-    ).exists()
-
-    if already_issued:
+    due = _issue_book_to_student(student, book)
+    if due is None:
         messages.warning(
             request,
             f'{student.full_name} already has "{book.title}" issued.'
         )
     else:
-        due = date.today() + timedelta(days=14)
-        IssueBook.objects.create(student=student, book=book, due_date=due)
-
-        book.quantity -= 1
-        if book.quantity == 0:
-            book.available = False
-        book.save()
-
         messages.success(
             request,
             f'"{book.title}" issued to {student.full_name}. Due: {due.strftime("%B %d, %Y")}'
@@ -182,6 +194,7 @@ def notify_reservation(request, pk):
 
     if request.method == 'POST':
 
+        # Check whether the book is available
         if reservation.book.quantity < 1:
             messages.error(
                 request,
@@ -199,6 +212,7 @@ Hello {reservation.full_name},
 Good news! The book you reserved is now available.
 
 Book: {reservation.book.title}
+Author: {reservation.book.author}
 
 Please visit the library to collect your book.
 
@@ -211,17 +225,20 @@ Library Management System
                 fail_silently=False,
             )
 
+            # Change only the status
             reservation.status = 'notified'
-            reservation.notified_at = timezone.now()
             reservation.save()
 
             messages.success(
                 request,
-                f'Notification sent to {reservation.full_name}.'
+                f'Availability notification sent to {reservation.full_name}.'
             )
 
         except Exception as e:
-            messages.error(request, f'Email could not be sent: {str(e)}')
+            messages.error(
+                request,
+                f'Email could not be sent: {str(e)}'
+            )
 
     return redirect('reservation_management')
 
@@ -418,8 +435,6 @@ def member_delete(request, pk):
 
 #Issue and Return Books
 
-from datetime import date, timedelta
-
 @login_required
 def issue_book(request):
     students = Student.objects.all()
@@ -436,27 +451,10 @@ def issue_book(request):
             messages.error(request, f'"{book.title}" is out of stock.')
             return redirect('issue_book')
 
-        # Check if student already has this book
-        already = IssueBook.objects.filter(
-            student=student, book=book, return_date__isnull=True
-        ).exists()
-        if already:
+        due = _issue_book_to_student(student, book)
+        if due is None:
             messages.error(request, f'{student.full_name} already has "{book.title}" issued.')
             return redirect('issue_book')
-
-        # Create issue record
-        due = date.today() + timedelta(days=14)
-        IssueBook.objects.create(
-            student=student,
-            book=book,
-            due_date=due
-        )
-
-        # Decrease stock
-        book.quantity -= 1
-        if book.quantity == 0:
-            book.available = False
-        book.save()
 
         messages.success(request, f'"{book.title}" issued to {student.full_name}. Due: {due.strftime("%B %d, %Y")}')
         return redirect('issue_book')
